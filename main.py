@@ -3,7 +3,9 @@ import logging
 import os
 import random
 import re
+import io
 from datetime import datetime
+from ioio import get_exif_coords_from_bytesio
 
 from aiogram import Bot, Dispatcher, F, types
 from aiogram.filters import Command
@@ -64,15 +66,27 @@ async def cmd_start(msg: Message):
 
 @dp.message(F.document)
 async def file_handler(msg: Message):
+    buf2file = io.BytesIO()
     file_name = msg.document.file_name
     print(f"{file_name}: {msg.document.mime_type}")
     ff = await bot.get_file(msg.document.file_id)
+    file_path = ff.file_path
+    await bot.download_file(file_path, buf2file)
+    buf2file.seek(0)
+    if re.match('^\.jpe?g$',os.path.splitext(file_name)[1].lower()):
+        coords = get_exif_coords_from_bytesio(buf2file)
+        if coords:
+            await msg.reply(f'{coords}')
+        else:
+            await msg.reply(f'Нету!')
+
+
     print(ff)
     '''вставить проверку на соответствие XML-схеме'''
     if re.search("\.gpx$", file_name.lower()):
         await msg.reply(f'Поймал {file_name}')
-        ff = await bot.get_file(msg.document.file_id)
-        file_path = ff.file_path
+        # ff = await bot.get_file(msg.document.file_id)
+        # file_path = ff.file_path
         await bot.download_file(file_path, f"upload/{file_name}")
     else:
         await msg.reply('Это не GPX-файл... \U0001F92E')
