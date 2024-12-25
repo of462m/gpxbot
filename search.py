@@ -12,6 +12,7 @@ if __name__ == '__main__':
 
     pic_dir = 'angara'
     galina = (51.94419, 102.37698)
+    lovepeak = (51.94541, 102.43996)
 
     start_time = time.time()
     dcalc_time = 0
@@ -19,7 +20,7 @@ if __name__ == '__main__':
     for fname in os.listdir(pic_dir):
         fname = f'{pic_dir}/{fname}'
         # print(f'\n{fname}: ', end='')
-        with  open(fname, 'r', encoding='utf-8') as fgpx:
+        with open(fname, 'r', encoding='utf-8') as fgpx:
             parse_start_time = time.time()
             gpx = gpxpy.parse(fgpx)
             parse_time += time.time() - parse_start_time
@@ -27,7 +28,7 @@ if __name__ == '__main__':
                 for trkseg in track.segments:
                     for trkpt in trkseg.points:
                         pt = (float(trkpt.latitude), float(trkpt.longitude))
-                        d = get_distance(galina, pt)
+                        d = get_distance(lovepeak, pt)
                         dcalc_time += d[1]
                         if d[0] < 50:
                             print(fname)
