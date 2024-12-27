@@ -48,9 +48,16 @@ if __name__ == '__main__':
     pic_dir = 'angara'
     galina = (51.94419, 102.37698)
     lovepeak = (51.94541, 102.43996)
+    druzhba = (51.95099, 102.45566)
     munku =(51.71883, 100.59706)
     vit = (51.97477, 104.10470)
     idol =(51.95990, 104.08796)
+    ulya = (51.92763, 102.64003)
+    katka =(51.75186, 100.60565)
+    arkhey = (52.00675, 105.31717)
+    energetik =(51.95326, 102.50881)
+    bronenos = (51.95626, 102.47578)
+    trehglav_uzh = (51.96388, 102.36955)
 
 
 
@@ -59,7 +66,7 @@ if __name__ == '__main__':
     dcalc_time = 0
     parse_time = 0
 
-    reg_to_find = get_sqr_region(idol, 500)
+    reg_to_find = get_sqr_region(trehglav_uzh, 500)
     sqr_region_2gpx('enisey/mumu.gpx', reg_to_find)
 
 
