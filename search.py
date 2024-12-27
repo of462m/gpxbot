@@ -50,6 +50,7 @@ if __name__ == '__main__':
     lovepeak = (51.94541, 102.43996)
     munku =(51.71883, 100.59706)
     vit = (51.97477, 104.10470)
+    idol =(51.95990, 104.08796)
 
 
 
@@ -58,7 +59,7 @@ if __name__ == '__main__':
     dcalc_time = 0
     parse_time = 0
 
-    reg_to_find = get_sqr_region(vit, 20)
+    reg_to_find = get_sqr_region(idol, 500)
     sqr_region_2gpx('enisey/mumu.gpx', reg_to_find)
 
 
