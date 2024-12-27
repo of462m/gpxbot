@@ -17,7 +17,7 @@ def get_sqr_region(pt: tuple, side_size: int):
     delta_lon = 0.1*(side_size/2.0)/d_lon
     return (round(pt[0]+delta_lat,6), round(pt[1]-delta_lon,6)), (round(pt[0]-delta_lat,6), round(pt[1]+delta_lon,6))
 
-def sqr_region_2gpx(path: str, region: tuple):
+def sqr_region_2gpx(path: str, sqr_region: tuple):
     gpx = gpxpy.gpx.GPX()
     gpx_track = gpxpy.gpx.GPXTrack()
     gpx.tracks.append(gpx_track)
@@ -26,11 +26,11 @@ def sqr_region_2gpx(path: str, region: tuple):
     gpx_track.segments.append(gpx_segment)
 
     # Create points:
-    gpx_segment.points.append(gpxpy.gpx.GPXTrackPoint(region[0][0], region[0][1]))
-    gpx_segment.points.append(gpxpy.gpx.GPXTrackPoint(region[0][0], region[1][1]))
-    gpx_segment.points.append(gpxpy.gpx.GPXTrackPoint(region[1][0], region[1][1]))
-    gpx_segment.points.append(gpxpy.gpx.GPXTrackPoint(region[1][0], region[0][1]))
-    gpx_segment.points.append(gpxpy.gpx.GPXTrackPoint(region[0][0], region[0][1]))
+    gpx_segment.points.append(gpxpy.gpx.GPXTrackPoint(sqr_region[0][0], sqr_region[0][1]))
+    gpx_segment.points.append(gpxpy.gpx.GPXTrackPoint(sqr_region[0][0], sqr_region[1][1]))
+    gpx_segment.points.append(gpxpy.gpx.GPXTrackPoint(sqr_region[1][0], sqr_region[1][1]))
+    gpx_segment.points.append(gpxpy.gpx.GPXTrackPoint(sqr_region[1][0], sqr_region[0][1]))
+    gpx_segment.points.append(gpxpy.gpx.GPXTrackPoint(sqr_region[0][0], sqr_region[0][1]))
     with open(path, 'w', encoding='utf-8') as gpx_to_file:
         gpx_to_file.write(gpx.to_xml())
 
@@ -52,7 +52,11 @@ if __name__ == '__main__':
     munku =(51.71883, 100.59706)
     vit = (51.97477, 104.10470)
     idol =(51.95990, 104.08796)
-    ulya = (51.92763, 102.64003)
+    cherep = (51.95648, 104.08997)
+    zerkala = (51.97020, 104.13447)
+    verblud = (51.97502, 104.14206)
+    starkrep = (51.99310, 104.14044)
+    ulyabor = (51.92763, 102.64003)
     katka =(51.75186, 100.60565)
     arkhey = (52.00675, 105.31717)
     energetik =(51.95326, 102.50881)
@@ -66,7 +70,7 @@ if __name__ == '__main__':
     dcalc_time = 0
     parse_time = 0
 
-    reg_to_find = get_sqr_region(trehglav_uzh, 500)
+    reg_to_find = get_sqr_region(verblud, 100)
     sqr_region_2gpx('enisey/mumu.gpx', reg_to_find)
 
 
