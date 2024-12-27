@@ -9,11 +9,11 @@ def get_distance(pt_1: tuple, pt_2: tuple):
     return d, time.time() - start_time
 
 def get_sqr_region(pt: tuple, side_size: int):
-    d_lat = geopy.distance.geodesic(pt,(pt[0]+0.1, pt[1])).m
+    d_lat = geopy.distance.geodesic(pt,(pt[0]+0.01, pt[1])).m
     d_lon = geopy.distance.geodesic(pt,(pt[0], pt[1]+0.1)).m
     print(f"{d_lat}m {d_lon}m")
     # 0.1 нужно динамически поднастроить исходя из масштаба
-    delta_lat = 0.1*(side_size/2.0)/d_lat
+    delta_lat = 0.01*(side_size/2.0)/d_lat
     delta_lon = 0.1*(side_size/2.0)/d_lon
     return (round(pt[0]+delta_lat,6), round(pt[1]-delta_lon,6)), (round(pt[0]-delta_lat,6), round(pt[1]+delta_lon,6))
 
