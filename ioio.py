@@ -9,19 +9,22 @@ def get_exif_coords_from_bytesio(buf):
     buf.seek(0)
     img = Image(buf)
     if img.has_exif:
-
-        imglat = convert2DD(img.gps_latitude)
-        imglon = convert2DD(img.gps_longitude)
-        print(f"get exif coords from.. {img.gps_latitude}/{img.gps_longitude}")
-        return imglat, imglon
-    else:
-        return None
+        try:
+            imglat = convert2DD(img.gps_latitude)
+            imglon = convert2DD(img.gps_longitude)
+            print(f"get exif coords from.. {img.gps_latitude}/{img.gps_longitude}")
+            return imglat, imglon
+        except(AttributeError) as err:
+            print(f"Exception: {err}")
+            return None
+        else:
+            return None
 
 
 if __name__ == '__main__':
     with io.BytesIO() as buf:
         # response = requests.get('https://angara.net/files/track/2024/09/28/484.gpx')
-        response = requests.get(' ')
+        response = requests.get('https://nc.icc.ru/famous.jpg')
         if response.status_code == 200:
             print(response.headers)
             buf.write(response.content)
