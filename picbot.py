@@ -10,7 +10,7 @@ def decasum(k):
         return inner
     return doublesum
 
-@decasum(3)
+@decasum(10)
 def summa(a, b):
     return a + b
 
