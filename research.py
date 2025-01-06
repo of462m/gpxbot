@@ -13,7 +13,7 @@ if __name__ == '__main__':
     with  open(fname, 'r', encoding='utf-8') as gpx_from_file:
         gpx = gpxpy.parse(gpx_from_file)
     gpxgen = gpxpy.gpx.GPX()
-    gpxgen.creator = 'Taras I.Madzhara'
+    gpxgen.creator = 'GPXBaikal telebot v. 0.1D'
     gpxgen.author_email = 'taras@icc.ru'
 
     for wpt in gpx.waypoints:
