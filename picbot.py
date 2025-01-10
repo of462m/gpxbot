@@ -17,6 +17,21 @@ def summa(a, b):
 
 
 if __name__ == '__main__':
+
+    D, N, NEA = list(), list(), list()
+    A = ([2,3], [2,6], [7,6], [7,3], [5,3], [5,4], [3,4], [3,3])
+    for i in range(0,len(A)):
+        NEA.append(A[-i - 1])
+        # print(i+1, i % (len(A)-1))
+        i01, i02 = i, (i + 1) % len(A)
+        print(i02, i01)
+        D.append([A[i02][0]-A[i01][0], A[i02][1]-A[i01][1]])
+        N.append([-A[i02][1]+A[i01][1], A[i02][0]-A[i01][0]])
+    print(NEA)
+    print(D)
+    print(N)
+    exit(0)
+
     print(summa(3, 4))
     exit(0)
     fname = "tmp/2nd.jpg"
