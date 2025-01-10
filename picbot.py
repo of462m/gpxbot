@@ -1,4 +1,5 @@
 from exif import Image
+from Levenshtein import distance as l_distance
 
 def convert2DD(c):
     return round(c[0] + (c[1]/60) + (c[2]/3600), 6)
@@ -17,7 +18,8 @@ def summa(a, b):
 
 
 if __name__ == '__main__':
-
+    print(l_distance('трехглавая', 'трехглавоя', weights=(1,5,3)))
+    # print(l_distance('трехглавая', 'трехглавя', weights=(100,1,10)))
     D, N, NEA = list(), list(), list()
     A = ([2,3], [2,6], [7,6], [7,3], [5,3], [5,4], [3,4], [3,3])
     for i in range(0,len(A)):
