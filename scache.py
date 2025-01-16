@@ -1,6 +1,7 @@
 import os
 import re
 from gpxpy.gpx import GPX
+from regions import get_gpx_season
 
 
 # п.Доктор - почистить через регулярку
@@ -14,7 +15,8 @@ def str_clean(s: str):
     pr = (
         'на', 'по', 'из', 'от', 'за', 'до', 'перед', 'без', 'через', 'над', 'про',
         'под', 'для', 'после', 'при', 'между', 'около', 'среди', 'вокруг', 'мимо',
-        'возле', 'вдоль', 'спереди', 'слева', 'справа,' 'сзади', 'не', 'км',
+        'возле', 'вдоль', 'спереди', 'слева', 'справа,' 'сзади', 'не', 'км', 'туда',
+        'обратно',
     )
     mon = ('jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec',
            'янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек',
@@ -24,7 +26,7 @@ def str_clean(s: str):
             )
 
     strava = ('strava', 'by', 'stravatogpx', 'app')
-    remove_symbols_queue0 = ',;:\'"=()!?[]<>{}|*&^%$#@^|~_+-/\\'
+    remove_symbols_queue0 = '\n,;:\'"=()!?[]<>{}|*&^%$#@^|~_+-/\\'
 
     for symbol in remove_symbols_queue0:
         s = s.replace(symbol, ' ')
@@ -48,6 +50,11 @@ def str_clean(s: str):
         # word = re.sub(r'^руч\.', r'ручей', word)
         word = re.sub(r'^зим\.(\w+)?$', r'зимовье \1', word)
         # word = re.sub(r'^зим\.', r'зимовье', word)
+        word = re.sub(r'^м\.(\w+)?$', r'мыс \1', word)
+        word = re.sub(r'^пещ\.(\w+)?$', r'пещера \1', word)
+        word = re.sub(r'^ст\.(\w+)?$', r'станция старая \1', word)
+        word = re.sub(r'^ур\.(\w+)?$', r'урочище \1', word)
+        word = re.sub(r'^о\.(\w+)?$', r'остров озеро \1', word)
 
         # word = re.sub(r'\d{4}[_.-]\d\d[_.-]\d\d', r'', word)
         # word = re.sub(r'\d\d[_.-]\d\d[_.-]\d{4}', r'', word)
@@ -70,6 +77,7 @@ def str_clean(s: str):
 def index_gpx(fname: str, gpx: GPX, index_dir: str='index'):
     with open('enisey/eng.txt', 'a', encoding='utf-8') as ff:
         sstr = list()
+        # trk-ов может быть несколько!
         for trk in gpx.tracks:
             if trk.name:
                 sstr.append(trk.name)
@@ -77,8 +85,21 @@ def index_gpx(fname: str, gpx: GPX, index_dir: str='index'):
                 if len(trk.description) < 256:
                     sstr.append(trk.description)
             # ff.write(f"{fname}: trkname:\'{trk.name}\' clean:\'{str_clean(trk.name)}\'\n")
-            ff.write(f"{fname}: sstr:\'{' '.join(sstr)}\' clean:\'{str_clean(' '.join(sstr))}\'\n")
-
+            ff.write(f"{fname}: season: {get_gpx_season(gpx)} sstr:\'{' '.join(sstr)}\' clean:\'{str_clean(' '.join(sstr))}\'\n")
+def raw_gpx(fname: str, gpx: GPX, raw_dir: str='dat/trk'):
+    pass
+    # print(f"{gpx.tracks.count()}")
+    # with open(f'{raw_dir}/{fname}', 'a', encoding='utf-8') as ff:
+    #     # sstr = list()
+    #     # trk-ов может быть несколько!
+    #     for trk in gpx.tracks:
+    #         if trk.name:
+    #             sstr.append(trk.name)
+    #         if trk.description:
+    #             if len(trk.description) < 256:
+    #                 sstr.append(trk.description)
+    #         # ff.write(f"{fname}: trkname:\'{trk.name}\' clean:\'{str_clean(trk.name)}\'\n")
+    #         ff.write(f"{fname}: season: {get_gpx_season(gpx)} sstr:\'{' '.join(sstr)}\' clean:\'{str_clean(' '.join(sstr))}\'\n")
 
 if __name__ == '__main__':
     pass

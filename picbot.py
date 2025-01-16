@@ -18,7 +18,7 @@ def summa(a, b):
 
 
 if __name__ == '__main__':
-    print(l_distance('трехглавая', 'трехглавоя', weights=(1,5,3)))
+    print(l_distance('камень', 'камнем', weights=(1,1,1)))
     # print(l_distance('трехглавая', 'трехглавя', weights=(100,1,10)))
     D, N, NEA = list(), list(), list()
     A = ([2,3], [2,6], [7,6], [7,3], [5,3], [5,4], [3,4], [3,3])
