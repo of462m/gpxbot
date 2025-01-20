@@ -7,8 +7,7 @@ from regions import get_gpx_season
 # п.Доктор - почистить через регулярку
 # убираем предлоги https://skysmart.ru/articles/russian/razryady-predlogov
 # цифры, даты, 178-й километр
-# Бабха-Чертики
-# перевал пер. пик п. гора
+
 
 def str_clean(s: str):
     res = list()
@@ -36,7 +35,7 @@ def str_clean(s: str):
         word = re.sub(r'^\d{1,4}', r'', word)
         # word = re.sub(r'ст\.(\w+)', r'старая \1', word)
         # word = re.sub(r'ст\.', r'старая', word)
-        word = re.sub(r'^ск\.(\w+)?$', r'скал \1', word)
+        word = re.sub(r'^ск\.(\w+)?$', r'скальник \1', word)
         # word = re.sub(r'^ск\.', r'скал', word)
         word = re.sub(r'^п\.(\w+)?$', r'пик \1', word)
         # word = re.sub(r'^п\.', r'пик', word)
@@ -84,8 +83,7 @@ def index_gpx(fname: str, gpx: GPX, index_dir: str='index'):
             if trk.description:
                 if len(trk.description) < 256:
                     sstr.append(trk.description)
-            # ff.write(f"{fname}: trkname:\'{trk.name}\' clean:\'{str_clean(trk.name)}\'\n")
-            ff.write(f"{fname}: season: {get_gpx_season(gpx)} sstr:\'{' '.join(sstr)}\' clean:\'{str_clean(' '.join(sstr))}\'\n")
+            ff.write(f"{fname}: season: {get_gpx_season(gpx)} sstr:\'{' '.join(sstr)}\' w-tokens:\'{str_clean(' '.join(sstr))}\'\n")
 def raw_gpx(fname: str, gpx: GPX, raw_dir: str='dat/trk'):
     pass
     # print(f"{gpx.tracks.count()}")

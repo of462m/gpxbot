@@ -87,9 +87,7 @@ if __name__ == '__main__':
 
 
     start_time = time.time()
-    # pic_dir = 'tmp'
     pic_dir = 'angara'
-    # fsearch = "enisey/err.txt"
     fsearch = "enisey/search.txt"
 
     # сюда добавить описательные поля (list), которое будет выдаваться в описании выдачи

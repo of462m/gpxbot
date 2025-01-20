@@ -10,7 +10,7 @@ mond = (51.85732, 100.33554, 51.68566, 100.85739)
 
 
 if __name__ == '__main__':
-    with  open(fname, 'r', encoding='utf-8') as gpx_from_file:
+    with open(fname, 'r', encoding='utf-8') as gpx_from_file:
         gpx = gpxpy.parse(gpx_from_file)
     gpxgen = gpxpy.gpx.GPX()
     gpxgen.creator = 'GPXBaikal telebot v. 0.1D'
@@ -26,20 +26,3 @@ if __name__ == '__main__':
                         gpxgen.waypoints.append(gpx_wpt)
     with open("enisey/primunk.gpx", 'w', encoding='utf-8') as gpx_to_file:
         gpx_to_file.write(gpxgen.to_xml())
-
-
-    # print(len(gpx.waypoints))
-    # for waypoint in gpx.waypoints:
-
-
-
-
-
-        # for track in gpx.tracks:
-        #     try:
-        #         if track.name.lower().find('монды') != -1:
-        #             print(f'FIND {isval}\tcreator: {gpx.creator}\t\t\t{track.name}')
-        #         else:
-        #             print(f'NOTFIND: {isval}\tcreator: {gpx.creator}\t\t\t{track.name}')
-        #     except AttributeError:
-        #         print(f'NOTFIND(exc): {isval}\tcreator: {gpx.creator}\t\t\t{track.name}')

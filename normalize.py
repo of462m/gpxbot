@@ -1,8 +1,8 @@
 import os
 from lxml import etree
-# import xml.etree.ElementTree as ET
-import gpxpy
-import gpxpy.gpx
+
+
+
 
 if __name__ == '__main__':
 
@@ -33,6 +33,8 @@ if __name__ == '__main__':
                     isval = gpx10_xmlschema.validate(xml_doc)
                 elif root.attrib['version'] == '1.1':
                     isval = gpx11_xmlschema.validate(xml_doc)
+                else:
+                    isval = False
 
                 str2file = f"{fname}\t{xml_doc.docinfo.encoding.lower()}\t{isval}\t{root.attrib['version']}\t{root.attrib['creator']}"
                 print(f"Writing: {str2file}")
