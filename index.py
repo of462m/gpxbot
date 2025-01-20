@@ -27,11 +27,10 @@ class GPX_Index():
         self.__href_dir = f"{root_dir}/href/"
         self.__data_dir = f"{root_dir}/data/"
         self.__wtrie_dir = f"{root_dir}/wtrie/"
-
-    def init(self):
-        os.makedirs(self.__href_dir)
-        os.makedirs(self.__data_dir)
-        os.makedirs(self.__wtrie_dir)
+        if not os.path.isdir(root_dir):
+            os.makedirs(self.__href_dir)
+            os.makedirs(self.__data_dir)
+            os.makedirs(self.__wtrie_dir)
 
     def add_gpx(self, gpx_filename):
         pass
@@ -45,8 +44,8 @@ if __name__ == '__main__':
     gpx_dir = 'angara-w'
     href_dir = 'angara-l'
 
-    index = GPX_Index("index00")
-    # index.init()
+    index = GPX_Index("index01")
+
 
     # os.makedirs(os.path.dirname(путь_к_файлу), exist_ok=True)  # Создаём структуру каталогов
     # open(путь_к_файлу, 'a').close()  # И вот появился файл
