@@ -1,8 +1,7 @@
 import os
 import gpxpy
 from gpxpy.gpx import GPX
-
-
+from trash import md5_checksum
 
 class GPX_Index():
 
@@ -35,8 +34,9 @@ class GPX_Index():
     def add_gpx(self, gpx_filename):
         pass
 
-    def search(self, search_str):
-        #возвращаем отсортированный массив tuples'ов формата (имя,ссылка,коэфф. релевантности,)
+    def search(self, stokens_list):
+        #возвращаем отсортированный массив tuples'ов формата (имя,ссылка, коэфф.релевантности)
+        #в сервисе - соответствующий json
         pass
 
 

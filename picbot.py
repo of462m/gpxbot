@@ -1,40 +1,22 @@
 from exif import Image
-from Levenshtein import distance as l_distance
+from Levenshtein import distance as L_distance
+from Levenshtein import jaro as L_jaro
+from Levenshtein import jaro_winkler as L_jaro_winkler
+from jaro import jaro_winkler_metric
 
 def convert2DD(c):
     return round(c[0] + (c[1]/60) + (c[2]/3600), 6)
 
-def decasum(k):
-    def doublesum(ff):
-        def inner(*args, **kwargs):
-            return k * ff(*args, **kwargs)
-        return inner
-    return doublesum
 
-@decasum(10)
-def summa(a, b):
-    return a + b
 
 
 
 if __name__ == '__main__':
-    print(l_distance('камень', 'камнем', weights=(1,1,1)))
-    # print(l_distance('трехглавая', 'трехглавя', weights=(100,1,10)))
-    D, N, NEA = list(), list(), list()
-    A = ([2,3], [2,6], [7,6], [7,3], [5,3], [5,4], [3,4], [3,3])
-    for i in range(0,len(A)):
-        NEA.append(A[-i - 1])
-        # print(i+1, i % (len(A)-1))
-        i01, i02 = i, (i + 1) % len(A)
-        print(i02, i01)
-        D.append([A[i02][0]-A[i01][0], A[i02][1]-A[i01][1]])
-        N.append([-A[i02][1]+A[i01][1], A[i02][0]-A[i01][0]])
-    print(NEA)
-    print(D)
-    print(N)
-    exit(0)
-
-    print(summa(3, 4))
+    cmp = ("пиком", "пик")
+    print(L_distance(cmp[0], cmp[1], weights=(1,1,1)))
+    print(L_jaro(cmp[0], cmp[1]))
+    print(L_jaro_winkler(cmp[0], cmp[1]))
+    print(jaro_winkler_metric(cmp[0], cmp[1]))
     exit(0)
     fname = "tmp/2nd.jpg"
     with open(fname, 'rb') as image_file:

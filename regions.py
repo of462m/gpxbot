@@ -23,6 +23,7 @@ if __name__ == '__main__':
     fname_rd = f"{fdir}/unconvex.dat"
     with open(fname, 'r', encoding='utf-8') as fgpx:
         gpx = gpxpy.parse(fgpx)
+
     print(get_gpx_season(gpx))
     with open(fname_rd, 'w') as fdata:
         for trk in gpx.tracks:
