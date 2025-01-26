@@ -4,7 +4,7 @@
 #include <math.h>
 #include <unistd.h>
 #include <malloc.h>
-#include "mylib.h"
+#include "libgpxbaikal.h"
 
 void deg2rad(wpt *wpt) {
 	wpt->lat = M_PI*wpt->lat/180.0;
