@@ -1,0 +1,9 @@
+requests~=2.32.3
+exif~=1.6.1
+asyncio~=3.4.3
+aiogram~=3.7.0
+python-dotenv~=1.0.1
+gpxpy~=1.6.2
+lxml~=5.2.2
+levenshtein~=0.26.1
+geopy~=2.4.1
