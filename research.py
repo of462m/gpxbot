@@ -4,11 +4,6 @@ fname = "angara/289.gpx"
 # mond = (51.82069, 100.89603, 51.66572, 101.14872)
 mond = (51.85732, 100.33554, 51.68566, 100.85739)
 
-
-
-
-
-
 if __name__ == '__main__':
     with open(fname, 'r', encoding='utf-8') as gpx_from_file:
         gpx = gpxpy.parse(gpx_from_file)
