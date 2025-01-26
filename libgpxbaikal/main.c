@@ -5,7 +5,7 @@
 #include <math.h>
 #include <unistd.h>
 #include <malloc.h>
-#include "mylib.h"
+#include "libgpxbaikal.h"
 
 int main(int argc, char *argv[]) {
 
