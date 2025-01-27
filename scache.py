@@ -15,7 +15,7 @@ def str_clean(s: str):
         'на', 'по', 'из', 'от', 'за', 'до', 'перед', 'без', 'через', 'над', 'про',
         'под', 'для', 'после', 'при', 'между', 'около', 'среди', 'вокруг', 'мимо',
         'возле', 'вдоль', 'спереди', 'слева', 'справа,' 'сзади', 'не', 'км', 'туда',
-        'обратно',
+        'обратно', 'же',
     )
     mon = ('jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec',
            'янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек',
@@ -25,6 +25,7 @@ def str_clean(s: str):
             )
 
     strava = ('strava', 'by', 'stravatogpx', 'app')
+    # ё к е !!!
     remove_symbols_queue0 = '\n,;:\'"=()!?[]<>{}|*&^%$#@^|~_+-/\\'
 
     for symbol in remove_symbols_queue0:
@@ -35,7 +36,7 @@ def str_clean(s: str):
         word = re.sub(r'^\d{1,4}', r'', word)
         # word = re.sub(r'ст\.(\w+)', r'старая \1', word)
         # word = re.sub(r'ст\.', r'старая', word)
-        word = re.sub(r'^ск\.(\w+)?$', r'скальник \1', word)
+        word = re.sub(r'^ск\.(\w+)?$', r'скал \1', word)
         # word = re.sub(r'^ск\.', r'скал', word)
         word = re.sub(r'^п\.(\w+)?$', r'пик \1', word)
         # word = re.sub(r'^п\.', r'пик', word)

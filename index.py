@@ -34,9 +34,12 @@ class GPXIndex:
             return None
 
         fjson = {"id": fid, "gpx-original-fname": os.path.split(gpx_filename)[1], "url": gpx_href, }
-        # fjson.update({"author-tg-id": author_tg_id})
-        # проверить схему, если не норм - fjson.update({"schema-valid":"False"}) else fjson.update({"schema-valid":"True"})
-        # is_match_xml_shema
+        # fjson.update({"author-tg-id": author_tg_id, "author-tg-name": author_tg_name})
+        # fjson.update({"upload-time": upload_time})
+        # проверить схему, если не норм - fjson.update({"match-gpx-xml-schema": "False"})
+        # else fjson.update({"match-gpx-xml-schema": "True"})
+        # is_match_xml_schema
+        # fjson.update({"match-gpx-xml-schema": is_match_gpx_xml_schema(?)})
 
         with open(gpx_filename, 'r', encoding='utf-8') as fgpx:
             try:
