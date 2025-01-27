@@ -17,7 +17,7 @@ if __name__ == '__main__':
 #	test.geo2_distance_m.argtypes = [ctypes.POINTER(wpt)]
 
 	w_pt = wpt(52.28832,104.24759)
-	test.deg2rad(ctypes.byref(w_pt))
+    test.deg2rad(ctypes.byref(w_pt))
 	print(w_pt.lat,w_pt.lon)
 
 	trk = (wpt*2)()
