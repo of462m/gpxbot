@@ -3,6 +3,7 @@ import json
 import gpxpy
 from gpxpy.gpx import GPX
 from trash import md5_checksum
+# from normalize import is_match_xml_schema
 
 
 class GPXIndex:
@@ -33,8 +34,9 @@ class GPXIndex:
             return None
 
         fjson = {"id": fid, "gpx-original-fname": os.path.split(gpx_filename)[1], "url": gpx_href, }
-
+        # fjson.update({"author-tg-id": author_tg_id})
         # проверить схему, если не норм - fjson.update({"schema-valid":"False"}) else fjson.update({"schema-valid":"True"})
+        # is_match_xml_shema
 
         with open(gpx_filename, 'r', encoding='utf-8') as fgpx:
             try:
@@ -42,6 +44,7 @@ class GPXIndex:
             except:
                 print(f"Parse Error: {gpx_filename}")
                 return None
+        # create_data
         fjson.update({"gpx-version": gpx.version})
         # wtokens = get_wtokens(gpx)
         # fjson.update({"w-tokens": wtokens})
@@ -49,6 +52,7 @@ class GPXIndex:
         # fjson.update({"p-tokens": ptokens})
         # rtokens = get_rtokens(?)
         # fjson.update({"r-tokens": rtokens})
+        # self.wtrie_insert(?)
 
         with open(f"{self.__index_dir}/{fid}.json", "w") as ff:
             # json.dump(fjson, ff, sort_keys=False, ensure_ascii=False)
