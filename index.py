@@ -1,7 +1,9 @@
 import os
+import json
 import gpxpy
 from gpxpy.gpx import GPX
 from trash import md5_checksum
+
 
 class GPX_Index():
 
@@ -9,34 +11,44 @@ class GPX_Index():
     def root_dir(self):
         return self.__root_dir
 
-    @property
-    def href_dir(self):
-        return self.__href_dir
-
-    @property
-    def data_dir(self):
-        return self.__data_dir
-
-    @property
-    def wtrie_dir(self):
-        return self.__wtrie_dir
-
     def __init__(self, root_dir):
         self.__root_dir = root_dir
-        self.__href_dir = f"{root_dir}/href/"
-        self.__data_dir = f"{root_dir}/data/"
+        self.__index_dir = f"{root_dir}/index/"
+        self.__points_dir = f"{root_dir}/points/"
+        self.__regions_dir = f"{root_dir}/regions/"
         self.__wtrie_dir = f"{root_dir}/wtrie/"
         if not os.path.isdir(root_dir):
-            os.makedirs(self.__href_dir)
-            os.makedirs(self.__data_dir)
+            os.makedirs(self.__index_dir)
+            os.makedirs(self.__points_dir)
+            os.makedirs(self.__regions_dir)
             os.makedirs(self.__wtrie_dir)
 
-    def add_gpx(self, gpx_filename):
+    def add_gpx(self, gpx_filename: str, gpx_href: str = None):
+        fid = md5_checksum(gpx_filename)
+        if os.path.isfile(f"{self.__index_dir}/{fid}.json"):
+            print(f"File {gpx_filename} md5-hash: {fid} exists.")
+            return None
+        fjson = {"id": fid, "gpx-original-fname": os.path.split(gpx_filename)[1], "url": gpx_href, }
+
+        with open(f"{self.__index_dir}/{fid}.json", "w") as ff:
+            json.dump(fjson, ff, sort_keys=False, ensure_ascii=False)
+            # json.dump(fjson, ff, sort_keys=False, ensure_ascii=False, indent=3)
+
+        return 1
+
+
+
+    def add_point(self, lat: float, lon: float, size: float, p_tokens: list):
         pass
 
+    def add_region(self, gpx_region: GPX, r_tokens: list):
+        pass
+
+
+
     def search(self, stokens_list):
-        #возвращаем отсортированный массив tuples'ов формата (имя,ссылка, коэфф.релевантности)
-        #в сервисе - соответствующий json
+        # возвращаем отсортированный массив tuples'ов формата (имя,ссылка, коэфф.релевантности)
+        # в сервисе - соответствующий json
         pass
 
 
@@ -45,6 +57,12 @@ if __name__ == '__main__':
     href_dir = 'angara-l'
 
     index = GPX_Index("index01")
+    for fname in os.listdir("angara-w"):
+        gpx_fname = f"angara-w/{fname}"
+        gpx_href_fname = f"angara-l/{fname.split('.')[0]}.href"
+        with open(gpx_href_fname, "r") as fhref:
+            url = fhref.readline().strip('\n')
+        index.add_gpx(gpx_fname, url)
 
 
     # os.makedirs(os.path.dirname(путь_к_файлу), exist_ok=True)  # Создаём структуру каталогов
