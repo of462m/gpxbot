@@ -50,6 +50,7 @@ def str_clean(s: str):
         word = re.sub(r'^зим\.(\w+)?$', r'зимовье \1', word)
         # word = re.sub(r'^зим\.', r'зимовье', word)
         word = re.sub(r'^м\.(\w+)?$', r'мыс \1', word)
+        word = re.sub(r'^бух\.(\w+)?$', r'бухта \1', word)
         word = re.sub(r'^пещ\.(\w+)?$', r'пещера \1', word)
         word = re.sub(r'^ст\.(\w+)?$', r'станция старая \1', word)
         word = re.sub(r'^ур\.(\w+)?$', r'урочище \1', word)
