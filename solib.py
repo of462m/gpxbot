@@ -8,7 +8,7 @@ class wpt(ctypes.Structure):
 
 if __name__ == '__main__':
 
-	test = ctypes.CDLL('/usr/lib/libgpxbaikal.so')
+    test = ctypes.CDLL('/usr/lib/libgpxbaikal.so')
 
 #	test.deg2rad.restype = ctypes.c_void_p
 #	test.deg2rad.argtypes = [ctypes.POINTER(wpt)]
