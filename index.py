@@ -44,8 +44,8 @@ class GPXIndex:
                 return None
         fjson.update({"gpx-version": gpx.version})
         # wtokens = get_wtokens(gpx)
-        # ptokens = get_ptokens(gpx)
-        # rtokens = get_rtokens(gpx)
+        # ptokens = get_ptokens(?)
+        # rtokens = get_rtokens(?)
 
         with open(f"{self.__index_dir}/{fid}.json", "w") as ff:
             # json.dump(fjson, ff, sort_keys=False, ensure_ascii=False)
