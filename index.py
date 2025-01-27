@@ -26,14 +26,15 @@ class GPXIndex:
             os.makedirs(self.__regions_dir)
             os.makedirs(self.__wtrie_dir)
 
-    def add_gpx_from_file(self, gpx_filename: str, gpx_href: str):
+    def add_gpx_from_file(self, gpx_filename: str, gpx_href: str = None):
+        # если gpx_href = None - размещаем у себя
 
         fid = md5_checksum(gpx_filename)
         if os.path.isfile(f"{self.__index_dir}/{fid}.json"):
             print(f"File {gpx_filename} md5-hash: {fid} exists.")
             return None
 
-        fjson = {"id": fid, "gpx-original-fname": os.path.split(gpx_filename)[1], "url": gpx_href, }
+        fjson = {"id": fid, "filename": os.path.split(gpx_filename)[1], "url": gpx_href, }
         # fjson.update({"author-tg-id": author_tg_id, "author-tg-name": author_tg_name})
         # fjson.update({"upload-time": upload_time})
         # проверить схему, если не норм - fjson.update({"match-gpx-xml-schema": "False"})
