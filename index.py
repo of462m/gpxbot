@@ -51,11 +51,11 @@ class GPXIndex:
         # create_data
         fjson.update({"gpx-version": gpx.version})
         # wtokens = get_wtokens(gpx)
-        # fjson.update({"w-tokens": wtokens})
+        # if wtokens fjson.update({"w-tokens": wtokens})
         # ptokens = get_ptokens(?)
-        # fjson.update({"p-tokens": ptokens})
+        # if ptokens fjson.update({"p-tokens": ptokens})
         # rtokens = get_rtokens(?)
-        # fjson.update({"r-tokens": rtokens})
+        # if rtokens fjson.update({"r-tokens": rtokens})
         # self.wtrie_insert(?)
 
         with open(f"{self.__index_dir}/{fid}.json", "w") as ff:
