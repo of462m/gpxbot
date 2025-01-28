@@ -82,17 +82,26 @@ class GPXIndex:
     def add_region(self, gpx_region: GPX, r_tokens: list):
         pass
 
-    def search(self, stokens_list):
-        # возвращаем отсортированный массив tuples'ов формата (имя,ссылка, коэфф.релевантности)
+    def search(self, stokens_list=None):
+        # возвращаем отсортированный массив tuples'ов формата:
+        # (суммарный к-т релевантности, частные к-ты w,p и r, имя,ссылка, )
         # в сервисе - соответствующий json
+        # aa = [(12.4544, '00022.gpx', 'https://angara.net/2024/10/02/22.gpx'),
+        #       (23.23443, '00023.gpx', 'https://angara.net/2024/10/03/23.gpx'),
+        #       (11.234343, '00024.gpx', 'https://angara.net/2023/12/31/24.gpx')
+        #       ]
+        # aa.sort(reverse=True)
+        # return aa
         pass
-
 
 if __name__ == '__main__':
     gpx_dir = 'angara-w'
     href_dir = 'angara-l'
 
+
     index = GPXIndex("index00")
+    print(index.search())
+    exit(0)
     for fname in os.listdir("angara-w"):
         gpx_fname = f"angara-w/{fname}"
         gpx_href_fname = f"angara-l/{fname.split('.')[0]}.href"
