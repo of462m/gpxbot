@@ -1,8 +1,11 @@
 import os
 import json
 import gpxpy
+from lxml import etree
 from gpxpy.gpx import GPX
 from trash import md5_checksum
+
+
 # from normalize import is_match_xml_schema
 
 
@@ -19,12 +22,18 @@ class GPXIndex:
         self.__points_dir = f"{root_dir}/points/"
         self.__regions_dir = f"{root_dir}/regions/"
         self.__wtrie_dir = f"{root_dir}/wtrie/"
+
         if not os.path.isdir(root_dir):
             os.makedirs(self.__gpx_data_dir)
             os.makedirs(self.__index_dir)
             os.makedirs(self.__points_dir)
             os.makedirs(self.__regions_dir)
             os.makedirs(self.__wtrie_dir)
+
+        self.__gpx10_xmlschema_doc = etree.parse('gpx10.xsd')
+        self.__gpx10_xmlschema = etree.XMLSchema(self.__gpx10_xmlschema_doc)
+        self.__gpx11_xmlschema_doc = etree.parse('gpx11.xsd')
+        self.__gpx11_xmlschema = etree.XMLSchema(self.__gpx11_xmlschema_doc)
 
     def add_gpx_from_file(self, gpx_filename: str, gpx_href: str = None):
         # если gpx_href = None - размещаем у себя
