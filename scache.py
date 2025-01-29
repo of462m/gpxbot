@@ -1,5 +1,3 @@
-import os
-import re
 from gpxpy.gpx import GPX
 from regions import get_gpx_season
 
@@ -7,77 +5,14 @@ from regions import get_gpx_season
 # п.Доктор - почистить через регулярку
 # убираем предлоги https://skysmart.ru/articles/russian/razryady-predlogov
 # цифры, даты, 178-й километр
-
-
-def str_clean(s: str):
-    res = list()
-    pr = (
-        'на', 'по', 'из', 'от', 'за', 'до', 'перед', 'без', 'через', 'над', 'про',
-        'под', 'для', 'после', 'при', 'между', 'около', 'среди', 'вокруг', 'мимо',
-        'возле', 'вдоль', 'спереди', 'слева', 'справа,' 'сзади', 'не', 'км', 'туда',
-        'обратно', 'же',
-    )
-    mon = ('jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec',
-           'янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек',
-           )
-    mday = ('mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun',
-            'пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс',
-            )
-
-    strava = ('strava', 'by', 'stravatogpx', 'app')
-    # ё к е !!!
-    remove_symbols_queue0 = '\n,;:\'"=()!?[]<>{}|*&^%$#@^|~_+-/\\'
-
-    for symbol in remove_symbols_queue0:
-        s = s.replace(symbol, ' ')
-        s = re.sub(r'\d{1,4}', r'', s)
-
-    for word in s.lower().split():
-        word = re.sub(r'^\d{1,4}', r'', word)
-        # word = re.sub(r'ст\.(\w+)', r'старая \1', word)
-        # word = re.sub(r'ст\.', r'старая', word)
-        word = re.sub(r'^ск\.(\w+)?$', r'скал \1', word)
-        # word = re.sub(r'^ск\.', r'скал', word)
-        word = re.sub(r'^п\.(\w+)?$', r'пик \1', word)
-        # word = re.sub(r'^п\.', r'пик', word)
-        word = re.sub(r'^пер\.(\w+)?$', r'перевал \1', word)
-        # word = re.sub(r'^пер\.', r'перевал', word)
-        word = re.sub(r'^оз\.(\w+)?$', r'озеро \1', word)
-        # word = re.sub(r'^оз\.', r'озеро', word)
-        word = re.sub(r'^р\.(\w+)?$', r'река \1', word)
-        # word = re.sub(r'^р\.', r'река', word)
-        word = re.sub(r'^руч\.(\w+)?$', r'ручей \1', word)
-        # word = re.sub(r'^руч\.', r'ручей', word)
-        word = re.sub(r'^зим\.(\w+)?$', r'зимовье \1', word)
-        # word = re.sub(r'^зим\.', r'зимовье', word)
-        word = re.sub(r'^м\.(\w+)?$', r'мыс \1', word)
-        word = re.sub(r'^бух\.(\w+)?$', r'бухта \1', word)
-        word = re.sub(r'^пещ\.(\w+)?$', r'пещера \1', word)
-        word = re.sub(r'^ст\.(\w+)?$', r'станция старая \1', word)
-        word = re.sub(r'^ур\.(\w+)?$', r'урочище \1', word)
-        word = re.sub(r'^о\.(\w+)?$', r'остров озеро \1', word)
-
-        # word = re.sub(r'\d{4}[_.-]\d\d[_.-]\d\d', r'', word)
-        # word = re.sub(r'\d\d[_.-]\d\d[_.-]\d{4}', r'', word)
-        # word = re.sub(r'\d\d[:-]\d\d([:-]\d\d)?', r'', word)
-
-        # word = re.sub(r'^(\w+)[.:]$', r'\1', word)
-
-        # is_time = re.match('\d{4}[_.-]\d\d[_.-]\d\d', word) \
-        #           or re.match('\d\d[:-]\d\d([:-]\d\d)?', word) \
-        #           or re.match('\d\d[_.-]\d\d[_.-]\d{4}', word)
-
-        word = word.replace('.', ' ')
-        for token in word.split():
-            if len(token) > 1 and token not in [*pr, *strava, *mon, *mday]:
-                res.append(token)
-                res = list(dict.fromkeys(res))
-    return ' '.join(res)
+from tokens import str_clean
 
 
 def index_gpx(fname: str, gpx: GPX, index_dir: str='index'):
     with open('enisey/eng.txt', 'a', encoding='utf-8') as ff:
         sstr = list()
+        if gpx.name:
+            sstr.append(gpx.name)
         # trk-ов может быть несколько!
         for trk in gpx.tracks:
             if trk.name:
@@ -85,7 +20,11 @@ def index_gpx(fname: str, gpx: GPX, index_dir: str='index'):
             if trk.description:
                 if len(trk.description) < 256:
                     sstr.append(trk.description)
-            ff.write(f"{fname}: season: {get_gpx_season(gpx)} sstr:\'{' '.join(sstr)}\' w-tokens:\'{str_clean(' '.join(sstr))}\'\n")
+            ff.write(f"{fname}[trk]: season: {get_gpx_season(gpx)} sstr:\'{' '.join(sstr)}\' w-tokens:\'{str_clean(' '.join(sstr))}\'\n")
+        for rte in gpx.routes:
+            if rte.name:
+                sstr.append(rte.name)
+            ff.write(f"{fname}[rte]: season: {get_gpx_season(gpx)} sstr:\'{' '.join(sstr)}\' w-tokens:\'{str_clean(' '.join(sstr))}\'\n")
 def raw_gpx(fname: str, gpx: GPX, raw_dir: str='dat/trk'):
     pass
     # print(f"{gpx.tracks.count()}")

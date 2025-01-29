@@ -4,6 +4,8 @@ import gpxpy
 from lxml import etree
 from gpxpy.gpx import GPX
 from trash import md5_checksum
+from tokens import get_wtokens, get_ptokens, get_rtokens
+from scache import index_gpx
 
 
 # from normalize import is_match_xml_schema
@@ -58,8 +60,14 @@ class GPXIndex:
                 print(f"Parse Error: {gpx_filename}")
                 return None
         # create_data
+
         fjson.update({"gpx-version": gpx.version})
-        # wtokens = get_wtokens(gpx)
+        if gpx.name:
+            fjson.update({"gpx-name": gpx.name})
+        if gpx.description:
+            fjson.update({"gpx-desc": gpx.description})
+        # index_gpx(gpx_filename, gpx)
+        wtokens = get_wtokens(gpx)
         # if wtokens fjson.update({"w-tokens": wtokens})
         # ptokens = get_ptokens(?)
         # if ptokens fjson.update({"p-tokens": ptokens})
@@ -94,14 +102,12 @@ class GPXIndex:
         # return aa
         pass
 
-if __name__ == '__main__':
-    gpx_dir = 'angara-w'
-    href_dir = 'angara-l'
 
+if __name__ == '__main__':
 
     index = GPXIndex("index00")
-    print(index.search())
-    exit(0)
+
+    # for fname in os.listdir("angara-tmp"):
     for fname in os.listdir("angara-w"):
         gpx_fname = f"angara-w/{fname}"
         gpx_href_fname = f"angara-l/{fname.split('.')[0]}.href"
@@ -109,5 +115,7 @@ if __name__ == '__main__':
             url = fhref.readline().strip('\n')
         index.add_gpx_from_file(gpx_fname, url)
 
-    # os.makedirs(os.path.dirname(путь_к_файлу), exist_ok=True)  # Создаём структуру каталогов
-    # open(путь_к_файлу, 'a').close()  # И вот появился файл
+    # os.makedirs("index00/wtrie/a/b/f", exist_ok=True)  # Создаём структуру каталогов
+    # open("index00/wtrie/a/b/f/5fc0ee56", 'a').close()  # И вот появился файл`
+    # os.makedirs("index00/wtrie/a/b/f", exist_ok=True)
+    # open("index00/wtrie/a/b/f/5fc0ee57", 'a').close()
