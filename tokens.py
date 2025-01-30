@@ -59,11 +59,12 @@ def str_clean(s: str):
 
 
 def get_wtokens(gpx: GPX):
-    pass
+    return ['абра', 'кодабра']
 
 
 def get_ptokens(gpx: GPX):
     pass
+
 
 def get_rtokens(gpx: GPX):
     pass

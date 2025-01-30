@@ -37,6 +37,19 @@ class GPXIndex:
         self.__gpx11_xmlschema_doc = etree.parse('gpx11.xsd')
         self.__gpx11_xmlschema = etree.XMLSchema(self.__gpx11_xmlschema_doc)
 
+    # def __add_to_wtrie(obj: GPXIndex, wtrie_dir: str, fid: str, tokens: list):
+    def __add_to_wtrie(self, fid: str, tokens: list):
+        for token in tokens:
+            wtrie_path_s = token[:3]
+            wtrie_path = '/'.join(list(wtrie_path_s))
+            os.makedirs(f"{self.__wtrie_dir}{wtrie_path}", exist_ok=True)
+            open(f"{self.__wtrie_dir}{wtrie_path}/{fid}", 'a').close()
+
+
+
+    def __get_from_wtrie(tokens: list) -> list:
+        pass
+
     def add_gpx_from_file(self, gpx_filename: str, gpx_href: str = None):
         # если gpx_href = None - размещаем у себя
 
@@ -68,7 +81,11 @@ class GPXIndex:
             fjson.update({"gpx-desc": gpx.description})
         # index_gpx(gpx_filename, gpx)
         wtokens = get_wtokens(gpx)
-        # if wtokens fjson.update({"w-tokens": wtokens})
+        if wtokens:
+            self.__add_to_wtrie(fid, wtokens)
+            fjson.update({"w-tokens": wtokens})
+
+
         # ptokens = get_ptokens(?)
         # if ptokens fjson.update({"p-tokens": ptokens})
         # rtokens = get_rtokens(?)
