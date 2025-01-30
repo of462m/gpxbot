@@ -1,15 +1,20 @@
+import hashlib
 import os
 import json
 import gpxpy
 from lxml import etree
 from gpxpy.gpx import GPX
-from trash import md5_checksum
-from tokens import get_wtokens, get_ptokens, get_rtokens
+from tokens import str_clean, get_wtokens, get_ptokens, get_rtokens
 from scache import index_gpx
 
 
 # from normalize import is_match_xml_schema
-
+def md5_checksum(filepath, tail: int = 8):
+    hash_md5 = hashlib.md5()
+    with open(filepath, "rb") as file:
+        for chunk in iter(lambda: file.read(4096), b""):
+            hash_md5.update(chunk)
+    return hash_md5.hexdigest()[-tail:]
 
 class GPXIndex:
 
@@ -40,8 +45,7 @@ class GPXIndex:
     # def __add_to_wtrie(obj: GPXIndex, wtrie_dir: str, fid: str, tokens: list):
     def __add_to_wtrie(self, fid: str, tokens: list):
         for token in tokens:
-            wtrie_path_s = token[:3]
-            wtrie_path = '/'.join(list(wtrie_path_s))
+            wtrie_path = '/'.join(list(token[:3]))
             os.makedirs(f"{self.__wtrie_dir}{wtrie_path}", exist_ok=True)
             open(f"{self.__wtrie_dir}{wtrie_path}/{fid}", 'a').close()
 
@@ -106,7 +110,20 @@ class GPXIndex:
     def add_region(self, gpx_region: GPX, r_tokens: list):
         pass
 
-    def search(self, stokens_list=None):
+    def search(self, tokens_str: str):
+        tokens = str_clean(tokens_str)
+        w_coeff = 0.0
+        for token in tokens:
+            print(f"token: {token}")
+            wtrie_path = '/'.join(list(token[:3]))
+            if os.path.isdir(f"{self.__wtrie_dir}{wtrie_path}"):
+                for fname in os.listdir(f"{self.__wtrie_dir}{wtrie_path}"):
+                    print(f"\t{fname}")
+                    # with open(f"{self.__index_dir}{fname}.json", "r", encoding='utf-8') as ff:
+                    # with open(f"{self.__index_dir}{fname}.json", "r") as ff:
+                    #     fjson = json.load(ff)
+                    pass
+                # os.makedirs(f"{self.__wtrie_dir}{wtrie_path}", exist_ok=True)
         # возвращаем отсортированный массив tuples'ов формата:
         # (суммарный к-т релевантности, частные к-ты w,p и r, имя,ссылка, )
         # в сервисе - соответствующий json
@@ -122,7 +139,8 @@ class GPXIndex:
 if __name__ == '__main__':
 
     index = GPXIndex("index00")
-
+    # index.search('новокш')
+    # exit(0)
     # for fname in os.listdir("angara-tmp"):
     for fname in os.listdir("angara-w"):
         gpx_fname = f"angara-w/{fname}"
@@ -135,3 +153,6 @@ if __name__ == '__main__':
     # open("index00/wtrie/a/b/f/5fc0ee56", 'a').close()  # И вот появился файл`
     # os.makedirs("index00/wtrie/a/b/f", exist_ok=True)
     # open("index00/wtrie/a/b/f/5fc0ee57", 'a').close()
+
+
+

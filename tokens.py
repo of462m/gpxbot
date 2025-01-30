@@ -3,11 +3,13 @@ from gpxpy.gpx import GPX
 
 
 def str_clean(s: str):
+    s = s.lower()
+    s = s.replace('ё', 'е')
     res = list()
     pr = (
         'на', 'по', 'из', 'от', 'за', 'до', 'перед', 'без', 'через', 'над', 'про',
         'под', 'для', 'после', 'при', 'между', 'около', 'среди', 'вокруг', 'мимо',
-        'возле', 'вдоль', 'спереди', 'слева', 'справа,' 'сзади', 'не', 'км', 'туда',
+        'возле', 'вдоль', 'спереди', 'слева', 'справа,' 'сзади', 'туда',
         'обратно', 'же',
     )
     mon = ('jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec',
@@ -18,6 +20,8 @@ def str_clean(s: str):
             )
 
     strava = ('strava', 'by', 'stravatogpx', 'app')
+
+    trash = ('трек', 'http', 'но', 'теперь', 'вся', 'весь', 'не', 'км')
     # ё к е !!!
     remove_symbols_queue0 = '\n,;:\'"=()!?[]<>{}|*&^%$#@^|~_+-/\\'
 
@@ -52,7 +56,7 @@ def str_clean(s: str):
 
         word = word.replace('.', ' ')
         for token in word.split():
-            if len(token) > 1 and token not in [*pr, *strava, *mon, *mday]:
+            if len(token) > 1 and token not in [*pr, *strava, *mon, *mday, *trash]:
                 res.append(token)
                 res = list(dict.fromkeys(res))
     return res
