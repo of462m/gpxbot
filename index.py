@@ -4,6 +4,7 @@ import json
 import gpxpy
 from lxml import etree
 from gpxpy.gpx import GPX
+from Levenshtein import jaro_winkler as L_jaro_winkler
 from tokens import str_clean, get_wtokens, get_ptokens, get_rtokens
 from scache import index_gpx
 
@@ -118,13 +119,12 @@ class GPXIndex:
             wtrie_path = '/'.join(list(token[:3]))
             if os.path.isdir(f"{self.__wtrie_dir}{wtrie_path}"):
                 for fname in os.listdir(f"{self.__wtrie_dir}{wtrie_path}"):
-                    print(f"\t{fname}")
                     with open(f"{self.__index_dir}{fname}.json", "r", encoding='utf-8') as ff:
-                    # with open(f"{self.__index_dir}{fname}.json", "r") as ff:
                         fjson = json.load(ff)
-                        print(fjson)
-                        exit(0)
-                    pass
+                        max_w = 0
+                        for wtoken in fjson['w-tokens']:
+                            max_w = max(L_jaro_winkler(token, wtoken), max_w)
+                    print(f"{fname}: {max_w}")
                 # os.makedirs(f"{self.__wtrie_dir}{wtrie_path}", exist_ok=True)
         # возвращаем отсортированный массив tuples'ов формата:
         # (суммарный к-т релевантности, частные к-ты w,p и r, имя,ссылка, )
@@ -141,7 +141,7 @@ class GPXIndex:
 if __name__ == '__main__':
 
     index = GPXIndex("index00")
-    index.search('трехгла')
+    index.search('хуйло бод')
     exit(0)
     # for fname in os.listdir("angara-tmp"):
     for fname in os.listdir("angara-w"):
