@@ -119,9 +119,11 @@ class GPXIndex:
             if os.path.isdir(f"{self.__wtrie_dir}{wtrie_path}"):
                 for fname in os.listdir(f"{self.__wtrie_dir}{wtrie_path}"):
                     print(f"\t{fname}")
-                    # with open(f"{self.__index_dir}{fname}.json", "r", encoding='utf-8') as ff:
+                    with open(f"{self.__index_dir}{fname}.json", "r", encoding='utf-8') as ff:
                     # with open(f"{self.__index_dir}{fname}.json", "r") as ff:
-                    #     fjson = json.load(ff)
+                        fjson = json.load(ff)
+                        print(fjson)
+                        exit(0)
                     pass
                 # os.makedirs(f"{self.__wtrie_dir}{wtrie_path}", exist_ok=True)
         # возвращаем отсортированный массив tuples'ов формата:
@@ -139,8 +141,8 @@ class GPXIndex:
 if __name__ == '__main__':
 
     index = GPXIndex("index00")
-    # index.search('новокш')
-    # exit(0)
+    index.search('трехгла')
+    exit(0)
     # for fname in os.listdir("angara-tmp"):
     for fname in os.listdir("angara-w"):
         gpx_fname = f"angara-w/{fname}"
