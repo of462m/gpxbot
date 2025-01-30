@@ -55,11 +55,25 @@ def str_clean(s: str):
             if len(token) > 1 and token not in [*pr, *strava, *mon, *mday]:
                 res.append(token)
                 res = list(dict.fromkeys(res))
-    return ' '.join(res)
+    return res
+    # return ' '.join(res)
 
 
 def get_wtokens(gpx: GPX):
-    return ['абра', 'кодабра']
+    wtokens = list()
+    if gpx.name:
+        wtokens.append(gpx.name)
+    # trk-ов может быть несколько!
+    for trk in gpx.tracks:
+        if trk.name:
+            wtokens.append(trk.name)
+        if trk.description:
+            if len(trk.description) < 256:
+                wtokens.append(trk.description)
+    for rte in gpx.routes:
+        if rte.name:
+            wtokens.append(rte.name)
+    return str_clean(' '.join(wtokens))
 
 
 def get_ptokens(gpx: GPX):

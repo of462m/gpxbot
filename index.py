@@ -52,7 +52,6 @@ class GPXIndex:
 
     def add_gpx_from_file(self, gpx_filename: str, gpx_href: str = None):
         # если gpx_href = None - размещаем у себя
-
         fid = md5_checksum(gpx_filename)
         if os.path.isfile(f"{self.__index_dir}/{fid}.json"):
             print(f"File {gpx_filename} md5-hash: {fid} exists.")
@@ -81,7 +80,7 @@ class GPXIndex:
             fjson.update({"gpx-desc": gpx.description})
         # index_gpx(gpx_filename, gpx)
         wtokens = get_wtokens(gpx)
-        if wtokens:
+        if len(wtokens):
             self.__add_to_wtrie(fid, wtokens)
             fjson.update({"w-tokens": wtokens})
 
