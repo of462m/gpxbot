@@ -121,9 +121,9 @@ class GPXIndex:
                 for fname in os.listdir(f"{self.__wtrie_dir}{wtrie_path}"):
                     with open(f"{self.__index_dir}{fname}.json", "r", encoding='utf-8') as ff:
                         fjson = json.load(ff)
-                        max_w = 0
-                        for wtoken in fjson['w-tokens']:
-                            max_w = max(L_jaro_winkler(token, wtoken), max_w)
+                    max_w = 0
+                    for wtoken in fjson['w-tokens']:
+                        max_w = max(L_jaro_winkler(token, wtoken), max_w)
                     print(f"{fname}: {max_w}")
                 # os.makedirs(f"{self.__wtrie_dir}{wtrie_path}", exist_ok=True)
         # возвращаем отсортированный массив tuples'ов формата:
@@ -141,7 +141,7 @@ class GPXIndex:
 if __name__ == '__main__':
 
     index = GPXIndex("index00")
-    index.search('зеркала')
+    index.search('байда')
     exit(0)
     # for fname in os.listdir("angara-tmp"):
     for fname in os.listdir("angara-w"):
