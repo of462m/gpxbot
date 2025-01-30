@@ -141,7 +141,7 @@ class GPXIndex:
 if __name__ == '__main__':
 
     index = GPXIndex("index00")
-    index.search('хуйло бод')
+    index.search('зеркала')
     exit(0)
     # for fname in os.listdir("angara-tmp"):
     for fname in os.listdir("angara-w"):
