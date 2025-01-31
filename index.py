@@ -4,7 +4,7 @@ import json
 import gpxpy
 from lxml import etree
 from gpxpy.gpx import GPX
-from Levenshtein import jaro_winkler as L_jaro_winkler
+from Levenshtein import jaro_winkler as L_jaro_winkler, distance as l_distance
 from tokens import str_clean, get_wtokens, get_ptokens, get_rtokens
 from scache import index_gpx
 
@@ -141,7 +141,7 @@ class GPXIndex:
 if __name__ == '__main__':
 
     index = GPXIndex("index00")
-    index.search('байда')
+    index.search('арка')
     exit(0)
     # for fname in os.listdir("angara-tmp"):
     for fname in os.listdir("angara-w"):
