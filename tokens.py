@@ -2,9 +2,8 @@ import re
 from gpxpy.gpx import GPX
 
 
-def str_clean(s: str):
-    s = s.lower()
-    s = s.replace('ё', 'е')
+def tokenize(s: str):
+    s = s.lower().replace('ё', 'е')
     res = list()
     pr = (
         'на', 'по', 'из', 'от', 'за', 'до', 'перед', 'без', 'через', 'над', 'про',
@@ -22,7 +21,7 @@ def str_clean(s: str):
     strava = ('strava', 'by', 'stravatogpx', 'app')
 
     trash = ('трек', 'http', 'но', 'теперь', 'вся', 'весь', 'не', 'км')
-    # ё к е !!!
+
     remove_symbols_queue0 = '\n,;:\'"=()!?[]<>{}|*&^%$#@^|~_+-/\\'
 
     for symbol in remove_symbols_queue0:
@@ -77,7 +76,7 @@ def get_wtokens(gpx: GPX):
     for rte in gpx.routes:
         if rte.name:
             wtokens.append(rte.name)
-    return str_clean(' '.join(wtokens))
+    return tokenize(' '.join(wtokens))
 
 
 def get_ptokens(gpx: GPX):

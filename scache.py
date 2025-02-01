@@ -5,7 +5,7 @@ from regions import get_gpx_season
 # п.Доктор - почистить через регулярку
 # убираем предлоги https://skysmart.ru/articles/russian/razryady-predlogov
 # цифры, даты, 178-й километр
-from tokens import str_clean
+from tokens import tokenize
 
 
 def index_gpx(fname: str, gpx: GPX, index_dir: str='index'):
@@ -20,11 +20,11 @@ def index_gpx(fname: str, gpx: GPX, index_dir: str='index'):
             if trk.description:
                 if len(trk.description) < 256:
                     sstr.append(trk.description)
-            ff.write(f"{fname}[trk]: season: {get_gpx_season(gpx)} sstr:\'{' '.join(sstr)}\' w-tokens:\'{str_clean(' '.join(sstr))}\'\n")
+            ff.write(f"{fname}[trk]: season: {get_gpx_season(gpx)} sstr:\'{' '.join(sstr)}\' w-tokens:\'{tokenize(' '.join(sstr))}\'\n")
         for rte in gpx.routes:
             if rte.name:
                 sstr.append(rte.name)
-            ff.write(f"{fname}[rte]: season: {get_gpx_season(gpx)} sstr:\'{' '.join(sstr)}\' w-tokens:\'{str_clean(' '.join(sstr))}\'\n")
+            ff.write(f"{fname}[rte]: season: {get_gpx_season(gpx)} sstr:\'{' '.join(sstr)}\' w-tokens:\'{tokenize(' '.join(sstr))}\'\n")
 def raw_gpx(fname: str, gpx: GPX, raw_dir: str='dat/trk'):
     pass
     # print(f"{gpx.tracks.count()}")
