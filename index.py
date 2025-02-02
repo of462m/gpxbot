@@ -4,7 +4,7 @@ import json
 import gpxpy
 from lxml import etree
 from gpxpy.gpx import GPX
-from Levenshtein import jaro_winkler as L_jaro_winkler, distance as l_distance
+from Levenshtein import jaro_winkler, distance as l_distance
 from tokens import tokenize, get_wtokens, get_ptokens, get_rtokens
 from scache import index_gpx
 
@@ -45,7 +45,7 @@ class GPXIndex:
         self.__gpx11_xmlschema = etree.XMLSchema(self.__gpx11_xmlschema_doc)
 
     # def __add_to_wtrie(obj: GPXIndex, wtrie_dir: str, fid: str, tokens: list):
-    def __add_to_wtrie(self, fid: str, tokens: list):
+    def __add_to_wtrie(self, fid: str, tokens: list) -> None:
         for token in tokens:
             wtrie_path = '/'.join(list(token[:3]))
             os.makedirs(f"{self.__wtrie_dir}{wtrie_path}", exist_ok=True)
@@ -60,7 +60,7 @@ class GPXIndex:
                     token_fids.append(fname)
         return token_fids
 
-    def __get_from_json(self, fid: str):
+    def __get_from_json(self, fid: str) -> dict:
         with open(f"{self.__index_dir}{fid}.json", "r", encoding='utf-8') as ff:
             return json.load(ff)
 
@@ -133,33 +133,21 @@ class GPXIndex:
             for token in tokens:
                 max_w = 0
                 for wtoken in fid_data['w-tokens']:
-                    max_w = max(L_jaro_winkler(token, wtoken, score_cutoff=0.88), max_w)
+                    max_w = max(max_w, jaro_winkler(token, wtoken, score_cutoff=0.88))
                 fid_max += max_w
-            print(f"FID: {tokens_fid} METRIC: {fid_max}")
-            fid_data.update({"w": fid_max})
-            fid_data.pop("w-tokens")
-            res_fids.append(fid_data)
+            fid_data.update({"w": round(fid_max, 4)})
+            # fid_data.pop("w-tokens")
+            if fid_max:
+                res_fids.append(fid_data)
         res_fids = sorted(res_fids, key=lambda d: d['w'], reverse=True)
-        res = {"size": len(res_fids), "res": res_fids}
+        res = {"search-str": tokens_str,"tokens": tokens, "size": len(res_fids), "res": res_fids}
         print(json.dumps(res))
-
-        # возвращаем отсортированный массив dict'ов формата:
-        # (суммарный к-т релевантности, частные к-ты w,p и r, имя,ссылка, )
-        # d1 = {"fid": 1, "coeff": 12.545434, "url": "https://gpxbaikal.ru/gpxdb/0001.gpx"}
-        # d2 = {"fid": 2, "coeff": 14.445455, "url": "https://gpxbaikal.ru/gpxdb/0002.gpx"}
-        # d3 = {"fid": 3, "coeff": 11.909090, "url": "https://gpxbaikal.ru/gpxdb/0003.gpx"}
-        # dd = [d1, d2, d3]
-        # newlist = sorted(dd, key=lambda d: d['coeff'], reverse=True)
-        # res = {"res": newlist}
-        # print(json.dumps(res))
-
-        pass
 
 
 if __name__ == '__main__':
 
     index = GPXIndex("index00")
-    index.search('озеро артемьева')
+    index.search('мугувек')
     exit(0)
     # for fname in os.listdir("angara-tmp"):
     for fname in os.listdir("angara-w"):
@@ -169,7 +157,3 @@ if __name__ == '__main__':
             url = fhref.readline().strip('\n')
         index.add_gpx_from_file(gpx_fname, url)
 
-    # os.makedirs("index00/wtrie/a/b/f", exist_ok=True)  # Создаём структуру каталогов
-    # open("index00/wtrie/a/b/f/5fc0ee56", 'a').close()  # И вот появился файл`
-    # os.makedirs("index00/wtrie/a/b/f", exist_ok=True)
-    # open("index00/wtrie/a/b/f/5fc0ee57", 'a').close()

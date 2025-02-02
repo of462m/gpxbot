@@ -2,7 +2,7 @@ import re
 from gpxpy.gpx import GPX
 
 
-def tokenize(s: str):
+def tokenize(s: str) -> list:
     s = s.lower().replace('ё', 'е')
     res = list()
     pr = (
