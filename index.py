@@ -120,25 +120,28 @@ class GPXIndex:
 
     def search(self, tokens_str: str):
         tokens = tokenize(tokens_str)
+        tokens_fids = list()
+        res_fids = list()
         for token in tokens:
-            print(f"token: {token}")
-            token_fids = self.__get_from_wtrie(token)
-            for token_fid in token_fids:
-                fid_data = self.__get_from_json(token_fid)
+            tokens_fids += self.__get_from_wtrie(token)
+        tokens_fids = list(dict.fromkeys(tokens_fids))
+
+        for tokens_fid in tokens_fids:
+            fid_data = self.__get_from_json(tokens_fid)
+            fid_max = 0
+            for token in tokens:
                 max_w = 0
                 for wtoken in fid_data['w-tokens']:
                     max_w = max(L_jaro_winkler(token, wtoken, score_cutoff=0.88), max_w)
-                print(f"{token_fid}: {max_w}")
+                fid_max += max_w
+            print(f"FID: {tokens_fid} METRIC: {fid_max}")
+            fid_data.update({"w": fid_max})
+            fid_data.pop("w-tokens")
+            res_fids.append(fid_data)
+        res_fids = sorted(res_fids, key=lambda d: d['w'], reverse=True)
+        res = {"res": res_fids}
+        print(json.dumps(res))
 
-                # for fname in os.listdir(f"{self.__wtrie_dir}{wtrie_path}"):
-                #     with open(f"{self.__index_dir}{fname}.json", "r", encoding='utf-8') as ff:
-                #         fjson = json.load(ff)
-                #     max_w = 0
-                #     for wtoken in fjson['w-tokens']:
-                #         max_w = max(L_jaro_winkler(token, wtoken), max_w)
-                #     print(f"{fname}: {max_w}")
-
-                # os.makedirs(f"{self.__wtrie_dir}{wtrie_path}", exist_ok=True)
         # возвращаем отсортированный массив dict'ов формата:
         # (суммарный к-т релевантности, частные к-ты w,p и r, имя,ссылка, )
         # d1 = {"fid": 1, "coeff": 12.545434, "url": "https://gpxbaikal.ru/gpxdb/0001.gpx"}
@@ -155,7 +158,7 @@ class GPXIndex:
 if __name__ == '__main__':
 
     index = GPXIndex("index00")
-    index.search('байкальск')
+    index.search('мамайский водопад')
     exit(0)
     # for fname in os.listdir("angara-tmp"):
     for fname in os.listdir("angara-w"):

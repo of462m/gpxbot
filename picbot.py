@@ -12,7 +12,7 @@ def convert2DD(c):
 
 
 if __name__ == '__main__':
-    cmp = ("сибиряка", "сибизмир")
+    cmp = ("галина", "пик")
     print(L_distance(cmp[0], cmp[1], weights=(1,1,1)))
     print(L_jaro(cmp[0], cmp[1]))
     print(L_jaro_winkler(cmp[0], cmp[1]))
