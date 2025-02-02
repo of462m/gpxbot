@@ -56,7 +56,8 @@ class GPXIndex:
         wtrie_path = '/'.join(list(token[:3]))
         if os.path.isdir(f"{self.__wtrie_dir}{wtrie_path}"):
             for fname in os.listdir(f"{self.__wtrie_dir}{wtrie_path}"):
-                token_fids.append(fname)
+                if os.path.isfile(f"{self.__wtrie_dir}{wtrie_path}/{fname}"):
+                    token_fids.append(fname)
         return token_fids
 
     def __get_from_json(self, fid: str):
@@ -139,7 +140,7 @@ class GPXIndex:
             fid_data.pop("w-tokens")
             res_fids.append(fid_data)
         res_fids = sorted(res_fids, key=lambda d: d['w'], reverse=True)
-        res = {"res": res_fids}
+        res = {"size": len(res_fids), "res": res_fids}
         print(json.dumps(res))
 
         # возвращаем отсортированный массив dict'ов формата:
@@ -158,7 +159,7 @@ class GPXIndex:
 if __name__ == '__main__':
 
     index = GPXIndex("index00")
-    index.search('мамайский водопад')
+    index.search('озеро артемьева')
     exit(0)
     # for fname in os.listdir("angara-tmp"):
     for fname in os.listdir("angara-w"):
