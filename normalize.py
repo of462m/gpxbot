@@ -40,23 +40,6 @@ if __name__ == '__main__':
                 print(f"Writing: {str2file}")
                 fout.write(f"{str2file}\n")
 
-                # if not isval:
-                #     print(f"{fname}:{isval}\tgpx: {root.attrib['version']}\tcreator: {root.attrib['creator']}")
-                # else:
-                #     pass
-                    # gpx_file = open(fname, 'r', encoding=xml_doc.docinfo.encoding)
-                    # gpx = gpxpy.parse(gpx_file)
-                    # # for waypoint in gpx.waypoints:
-                    # #     print(f'{isval}\tcreator: {gpx.creator}\t\t\t{waypoint.name}')
-                    # for track in gpx.tracks:
-                    #     try:
-                    #         if track.name.lower().find('монды') != -1:
-                    #             print(f'FIND {isval}\tcreator: {gpx.creator}\t\t\t{track.name}')
-                    #         else:
-                    #             print(f'NOTFIND: {isval}\tcreator: {gpx.creator}\t\t\t{track.name}')
-                    #     except AttributeError:
-                    #         print(f'NOTFIND(exc): {isval}\tcreator: {gpx.creator}\t\t\t{track.name}')
-
             except (etree.XMLSyntaxError, KeyError, UnicodeDecodeError) as err:
                 print("Упал-отжался!")
                 print(err)

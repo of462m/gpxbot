@@ -44,21 +44,21 @@ class GPXIndex:
         self.__gpx11_xmlschema_doc = etree.parse('gpx11.xsd')
         self.__gpx11_xmlschema = etree.XMLSchema(self.__gpx11_xmlschema_doc)
 
-    # def __add_to_wtrie(obj: GPXIndex, wtrie_dir: str, fid: str, tokens: list):
     def __add_to_wtrie(self, fid: str, tokens: list) -> None:
         for token in tokens:
             wtrie_path = '/'.join(list(token[:3]))
             os.makedirs(f"{self.__wtrie_dir}{wtrie_path}", exist_ok=True)
             open(f"{self.__wtrie_dir}{wtrie_path}/{fid}", 'a').close()
 
-    def __get_from_wtrie(self, token: str) -> list:
+    def __get_from_wtrie(self, tokens: list) -> list:
         token_fids = list()
-        wtrie_path = '/'.join(list(token[:3]))
-        if os.path.isdir(f"{self.__wtrie_dir}{wtrie_path}"):
-            for fname in os.listdir(f"{self.__wtrie_dir}{wtrie_path}"):
-                if os.path.isfile(f"{self.__wtrie_dir}{wtrie_path}/{fname}"):
-                    token_fids.append(fname)
-        return token_fids
+        for token in tokens:
+            wtrie_path = '/'.join(list(token[:3]))
+            if os.path.isdir(f"{self.__wtrie_dir}{wtrie_path}"):
+                for fname in os.listdir(f"{self.__wtrie_dir}{wtrie_path}"):
+                    if os.path.isfile(f"{self.__wtrie_dir}{wtrie_path}/{fname}"):
+                        token_fids.append(fname)
+        return list(dict.fromkeys(token_fids))
 
     def __get_from_json(self, fid: str) -> dict:
         with open(f"{self.__index_dir}{fid}.json", "r", encoding='utf-8') as ff:
@@ -121,39 +121,40 @@ class GPXIndex:
 
     def search(self, tokens_str: str):
         tokens = tokenize(tokens_str)
-        tokens_fids = list()
+        # для чистки хвостов из places-токенов
+        #
+        max_metric = len(tokens)
         res_fids = list()
-        for token in tokens:
-            tokens_fids += self.__get_from_wtrie(token)
-        tokens_fids = list(dict.fromkeys(tokens_fids))
-
+        tokens_fids = self.__get_from_wtrie(tokens)
         for tokens_fid in tokens_fids:
             fid_data = self.__get_from_json(tokens_fid)
+            # убрать в отдельную ф-цию в metric:
             fid_max = 0
             for token in tokens:
                 max_w = 0
                 for wtoken in fid_data['w-tokens']:
                     max_w = max(max_w, jaro_winkler(token, wtoken, score_cutoff=0.88))
                 fid_max += max_w
+            # вот по сюда (ввести коэфф-т уменьшения для places-токенов)
             fid_data.update({"w": round(fid_max, 4)})
             # fid_data.pop("w-tokens")
             if fid_max:
                 res_fids.append(fid_data)
         res_fids = sorted(res_fids, key=lambda d: d['w'], reverse=True)
-        res = {"search-str": tokens_str,"tokens": tokens, "size": len(res_fids), "res": res_fids}
-        print(json.dumps(res))
+        res = {"search-str": tokens_str, "search-tokens": tokens, "results-number": len(res_fids),
+               "search-results": res_fids}
+        print(json.dumps(res, ensure_ascii=False))
 
 
 if __name__ == '__main__':
 
-    index = GPXIndex("index00")
-    index.search('мугувек')
-    exit(0)
+    index = GPXIndex("index01")
+    # index.search('арка желаний')
+    # exit(0)
     # for fname in os.listdir("angara-tmp"):
-    for fname in os.listdir("angara-w"):
-        gpx_fname = f"angara-w/{fname}"
+    for fname in os.listdir("angara-tmp"):
+        gpx_fname = f"angara-tmp/{fname}"
         gpx_href_fname = f"angara-l/{fname.split('.')[0]}.href"
         with open(gpx_href_fname, "r") as fhref:
             url = fhref.readline().strip('\n')
         index.add_gpx_from_file(gpx_fname, url)
-

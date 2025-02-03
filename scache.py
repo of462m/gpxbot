@@ -27,23 +27,7 @@ def index_gpx(fname: str, gpx: GPX, index_dir: str='index'):
             ff.write(f"{fname}[rte]: season: {get_gpx_season(gpx)} sstr:\'{' '.join(sstr)}\' w-tokens:\'{tokenize(' '.join(sstr))}\'\n")
 def raw_gpx(fname: str, gpx: GPX, raw_dir: str='dat/trk'):
     pass
-    # print(f"{gpx.tracks.count()}")
-    # with open(f'{raw_dir}/{fname}', 'a', encoding='utf-8') as ff:
-    #     # sstr = list()
-    #     # trk-ов может быть несколько!
-    #     for trk in gpx.tracks:
-    #         if trk.name:
-    #             sstr.append(trk.name)
-    #         if trk.description:
-    #             if len(trk.description) < 256:
-    #                 sstr.append(trk.description)
-    #         # ff.write(f"{fname}: trkname:\'{trk.name}\' clean:\'{str_clean(trk.name)}\'\n")
-    #         ff.write(f"{fname}: season: {get_gpx_season(gpx)} sstr:\'{' '.join(sstr)}\' clean:\'{str_clean(' '.join(sstr))}\'\n")
+
 
 if __name__ == '__main__':
     pass
-    # fname = 'enisey/a/b/ab'
-    # fpath = os.path.dirname(fname)
-    #
-    # if not os.path.exists(fpath):
-    #     os.makedirs(fpath)
