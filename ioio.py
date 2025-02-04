@@ -22,6 +22,15 @@ def get_exif_coords_from_bytesio(buf):
 
 
 if __name__ == '__main__':
+    with io.StringIO() as bbuf:
+        bbuf.write("1 2 раз\n")
+        bbuf.write("3 4 два\n")
+        bbuf.seek(0)
+        with open('111.txt', "w", encoding='utf-8') as ff:
+            for line in bbuf.readlines():
+                ff.write(line)
+
+    exit(0)
     with io.BytesIO() as buf:
         # response = requests.get('https://angara.net/files/track/2024/09/28/484.gpx')
         response = requests.get('https://nc.icc.ru/famous.jpg')

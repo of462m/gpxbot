@@ -1,40 +1,52 @@
 import math
 import os
+from io import StringIO
 import geopy.distance
 import gpxpy
-from gpxpy.gpx import GPX
+from gpxpy.gpx import GPX, GPXBounds
 import time
 from math import sin, cos, acos
+import hashlib
+from index import md5_checksum
 from scache import index_gpx
 
+
 def get_curve_delta(pt: tuple, delta: float = 0.1):
-    llat  =geopy.distance.geodesic(pt, (pt[0]+delta, pt[1])).m
-    llon  =geopy.distance.geodesic(pt, (pt[0], pt[1]+delta)).m
+    llat = geopy.distance.geodesic(pt, (pt[0] + delta, pt[1])).m
+    llon = geopy.distance.geodesic(pt, (pt[0], pt[1] + delta)).m
     return delta * llat / llon
+
+
 def get_distance(pt_1: tuple, pt_2: tuple):
     start_time = time.time()
     d = geopy.distance.geodesic(pt_1, pt_2).m
     return d, time.time() - start_time
 
+
 def deg2rad(phi: float):
-    return math.pi*phi/180
+    return math.pi * phi / 180
+
+
 def get_distance_simple(pt_1: tuple, pt_2: tuple):
     start_time = time.time()
     rpt_1 = (deg2rad(pt_1[0]), deg2rad(pt_1[1]))
     rpt_2 = (deg2rad(pt_2[0]), deg2rad(pt_2[1]))
 
-    acos_arg = sin(rpt_1[0])*sin(rpt_2[0]) + cos(rpt_1[0])*cos(rpt_2[0])*cos(rpt_1[1] - rpt_2[1])
-    d = 1000*acos(acos_arg)*6371
+    acos_arg = sin(rpt_1[0]) * sin(rpt_2[0]) + cos(rpt_1[0]) * cos(rpt_2[0]) * cos(rpt_1[1] - rpt_2[1])
+    d = 1000 * acos(acos_arg) * 6371
     return d, time.time() - start_time
 
+
 def get_sqr_region(pt: tuple, side_size: int):
-    d_lat = geopy.distance.geodesic(pt, (pt[0]+0.01, pt[1])).m
-    d_lon = geopy.distance.geodesic(pt, (pt[0], pt[1]+0.1)).m
+    d_lat = geopy.distance.geodesic(pt, (pt[0] + 0.01, pt[1])).m
+    d_lon = geopy.distance.geodesic(pt, (pt[0], pt[1] + 0.1)).m
     # print(f"{d_lat}m {d_lon}m")
     # 0.1 нужно динамически поднастроить исходя из масштаба
-    delta_lat = 0.01*(side_size/2.0)/d_lat
-    delta_lon = 0.1*(side_size/2.0)/d_lon
-    return (round(pt[0]+delta_lat, 6), round(pt[1]-delta_lon, 6)), (round(pt[0]-delta_lat, 6), round(pt[1]+delta_lon, 6))
+    delta_lat = 0.01 * (side_size / 2.0) / d_lat
+    delta_lon = 0.1 * (side_size / 2.0) / d_lon
+    return (round(pt[0] + delta_lat, 6), round(pt[1] - delta_lon, 6)), (
+        round(pt[0] - delta_lat, 6), round(pt[1] + delta_lon, 6))
+
 
 def sqr_region_2gpx(path: str, sqr_region: tuple):
     gpx = gpxpy.gpx.GPX()
@@ -53,6 +65,7 @@ def sqr_region_2gpx(path: str, sqr_region: tuple):
     with open(path, 'w', encoding='utf-8') as gpx_to_file:
         gpx_to_file.write(gpx.to_xml())
 
+
 def is_in_sqr_region(region: tuple, pt: tuple):
     # region - ( (лев.верх), (прав.нижн.) )
     start_time = time.time()
@@ -63,10 +76,12 @@ def is_in_sqr_region(region: tuple, pt: tuple):
                     return True, time.time() - start_time
     return False, time.time() - start_time
 
+
 def init_new_gpx(gpx: GPX):
     gpx.creator = 'GPXBaikal telebot v. 0.1D'
     gpx.author_name = 'Taras I. Madzhara'
     gpx.author_email = 'marf51@mail.ru'
+
 
 def add_sqr_trk_2gpx(gpx: GPX, ptLAT: tuple, ptLON: tuple, tname: str):
     trk = gpxpy.gpx.GPXTrack(name=tname)
@@ -79,16 +94,73 @@ def add_sqr_trk_2gpx(gpx: GPX, ptLAT: tuple, ptLON: tuple, tname: str):
     trkseg.points.append(gpxpy.gpx.GPXTrackPoint(latitude=ptLAT[1], longitude=ptLON[0]))
     trkseg.points.append(gpxpy.gpx.GPXTrackPoint(latitude=ptLAT[0], longitude=ptLON[0]))
 
+
 def get_tracks_by_coords():
-    #можно выдать рой треков в одном gpx и архив с отдельными треками
+    # можно выдать рой треков в одном gpx и архив с отдельными треками
     pass
+
+
+def get_max(a: float, b: float) -> float:
+    return a if a > b else b
+
+
+def get_min(a: float, b: float) -> float:
+    return a if a < b else b
+
+
+class RegBounds:
+    __slots__ = ('min_lat', 'min_lon', 'max_lat', 'max_lon',)
+
+    def __init__(self):
+        self.min_lat, self.max_lat = 90.0, -90.0
+        self.min_lon, self.max_lon = 180.0, -180.0
+
+    def recalc(self, lat: float, lon: float):
+        self.min_lat = get_min(self.min_lat, lat)
+        self.min_lon = get_min(self.min_lon, lon)
+        self.max_lat = get_max(self.max_lat, lat)
+        self.max_lon = get_max(self.max_lon, lon)
+
+    def __repr__(self):
+        return f"MIN: {self.min_lat} {self.min_lon} MAX: {self.max_lat} {self.max_lon}"
+
+
+def add_gpx_to_data(gpx: GPX, fid: str) -> None:
+    bounds = RegBounds()
+    orbounds = gpx.get_bounds()
+    if orbounds:
+        print(f"MIN: {orbounds.min_latitude} {orbounds.min_longitude} MAX: {orbounds.max_latitude} {orbounds.max_longitude}")
+    gpx_data_dir = 'index00/data/'
+    linesnum = 0
+    for track in gpx.tracks:
+        for trkseg in track.segments:
+            linesnum = len(trkseg.points)
+    linesnum += len(gpx.waypoints)
+    for route in gpx.routes:
+        linesnum += len(route.points)
+
+    with open(f"{gpx_data_dir}{fid}.dat", "w", encoding='utf-8') as fdat:
+        # with open(f"{gpx_data_dir}{fid}.dat", "w", encoding='utf-8') as fdat:
+        fdat.write(f"{linesnum}\n")
+        for track in gpx.tracks:
+            for trkseg in track.segments:
+                for trkpoint in trkseg.points:
+                    fdat.write(f"{trkpoint.latitude} {trkpoint.longitude}\n")
+                    bounds.recalc(trkpoint.latitude, trkpoint.longitude)
+        for route in gpx.routes:
+            for rtept in route.points:
+                fdat.write(f"{rtept.latitude} {rtept.longitude}\n")
+                bounds.recalc(rtept.latitude, rtept.longitude)
+        for wpt in gpx.waypoints:
+            fdat.write(f"{wpt.latitude} {wpt.longitude}\n")
+            bounds.recalc(wpt.latitude, wpt.longitude)
+        fdat.write(f"{bounds}")
+
 
 if __name__ == '__main__':
 
-
-    start_time = time.time()
-    pic_dir = 'angara'
-    fsearch = "enisey/search.txt"
+    # start_time = time.time()
+    pic_dir = 'angara-tmp-00'
 
     # сюда добавить описательные поля (list), которое будет выдаваться в описании выдачи
     # пик Галина, бухта Ая, итд - p-tokens, кароч! stag уходит в небытие.
@@ -139,71 +211,8 @@ if __name__ == '__main__':
     dcalc_time = 0
     parse_time = 0
 
-    # reg_to_find = get_sqr_region(mamai_vdp, 100)
-    # sqr_region_2gpx('enisey/regions/sqr_region.gpx', reg_to_find)
-
-    with open(fsearch, 'w') as ss:
-        for fname in os.listdir(pic_dir):
-            linesnum = 0
-            nname = fname
-            fname = f'{pic_dir}/{fname}'
-            locations = []
-            with open(fname, 'r', encoding='utf-8') as fgpx:
-                parse_start_time = time.time()
-                gpx = gpxpy.parse(fgpx)
-                parse_time += time.time() - parse_start_time
-            # index_gpx(fname, gpx)
-            # raw_gpx(nname, gpx)
-            print(f"{fname}: tracks: {len(gpx.tracks)} waypoints: {len(gpx.waypoints)} routes: {len(gpx.routes)}")
-            for track in gpx.tracks:
-                for trkseg in track.segments:
-                    linesnum += len(trkseg.points)
-            with open(f"dat/trk/{nname}.dat","w") as fdat:
-                # print(f"{fname}: ln={linesnum}")
-                fdat.write(f"{linesnum}\n")
-                for track in gpx.tracks:
-                    for trkseg in track.segments:
-                        for trkpoint in trkseg.points:
-                            fdat.write(f"{trkpoint.latitude} {trkpoint.longitude}\n")
-
-            # gpx_desc = f'{fname}: mdname:\'{gpx.name}\' mdesc:\'{gpx.description}\''
-            # # gpx_desc = f'{gpx_desc} ele:{gpx.has_elevations()} time:{gpx.has_times()} '
-            # for track in gpx.tracks:
-            #     try:
-            #         if len(track.description) < 256:
-            #             gpx_desc = f'{gpx_desc} trkname:\'{track.name}\' trkdesc:\'{track.description}\''
-            #         else:
-            #             gpx_desc = f'{gpx_desc} trkname:\'{track.name}\' trkdesc:TOOBIG'
-            #     except (TypeError):
-            #         gpx_desc = f'{gpx_desc} trkname:\'{track.name}\' trkdesc:\'{track.description}\''
-            #     for trkseg in track.segments:
-            #         # trkseg.get_speed()
-            #         for trkpt in trkseg.points:
-            #             pt = (float(trkpt.latitude), float(trkpt.longitude))
-            #             for point in points:
-            #                 reg_to_find = get_sqr_region(point['coords'], point['size'])
-            #                 d = is_in_sqr_region(reg_to_find, pt)
-            #                 dcalc_time += d[1]
-            #                 if d[0]:
-            #                     if 'OK' not in locations:
-            #                         gpx_desc = f'{gpx_desc}'
-            #                         locations.append('OK')
-            #                     if point['stag'] not in locations:
-            #                         locations.append(point['stag'])
-            #
-            # gpx_desc = f'{gpx_desc} loc:'
-            # for location in locations:
-            #     gpx_desc = f'{gpx_desc} {location}'
-            #
-            # try:
-            #     ss.write(f'{gpx_desc}\n')
-            # except (UnicodeEncodeError) as ee:
-            #     gpx_desc = f"WERR {gpx_desc}"
-            # print(gpx_desc)
-    #
-    # full_time = time.time() - start_time
-    # dcalc_time_prc = round(100*dcalc_time/full_time,1)
-    # parse_time_prc = round(100*parse_time/full_time,1)
-    # print(f'Elapsed time: {time.time() - start_time} Calc time: {dcalc_time}({dcalc_time_prc}%) Parse time: {parse_time}({parse_time_prc}%)')
-
-        # print(round(get_distance(pt_1,pt_2),  0))
+    for pname in os.listdir(pic_dir):
+        fname = f'{pic_dir}/{pname}'
+        with open(fname, 'r', encoding='utf-8') as fgpx:
+            gpx = gpxpy.parse(fgpx)
+        add_gpx_to_data(gpx, md5_checksum(fname))

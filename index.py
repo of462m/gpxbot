@@ -149,8 +149,8 @@ class GPXIndex:
 if __name__ == '__main__':
 
     index = GPXIndex("index01")
-    # index.search('арка желаний')
-    # exit(0)
+    index.search('любовь')
+    exit(0)
     # for fname in os.listdir("angara-tmp"):
     for fname in os.listdir("angara-tmp"):
         gpx_fname = f"angara-tmp/{fname}"
