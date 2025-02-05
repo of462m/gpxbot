@@ -31,7 +31,7 @@ typedef struct {
 /*
 REGION FILE FORMAT:
 n - size of region array
-min.lat max.lat min.lon max.lon - bounds
+min.lat min.lon max.lat max.lon - bounds
 lat lon
 lat lon
 ...

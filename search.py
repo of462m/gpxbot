@@ -1,14 +1,12 @@
 import math
 import os
-from io import StringIO
+import io
 import geopy.distance
 import gpxpy
-from gpxpy.gpx import GPX, GPXBounds
+from gpxpy.gpx import GPX
 import time
 from math import sin, cos, acos
-import hashlib
-from index import md5_checksum
-from scache import index_gpx
+from index import md5_checksum, RegBounds, GPXIndex
 
 
 def get_curve_delta(pt: tuple, delta: float = 0.1):
@@ -100,67 +98,13 @@ def get_tracks_by_coords():
     pass
 
 
-def get_max(a: float, b: float) -> float:
-    return a if a > b else b
 
-
-def get_min(a: float, b: float) -> float:
-    return a if a < b else b
-
-
-class RegBounds:
-    __slots__ = ('min_lat', 'min_lon', 'max_lat', 'max_lon',)
-
-    def __init__(self):
-        self.min_lat, self.max_lat = 90.0, -90.0
-        self.min_lon, self.max_lon = 180.0, -180.0
-
-    def recalc(self, lat: float, lon: float):
-        self.min_lat = get_min(self.min_lat, lat)
-        self.min_lon = get_min(self.min_lon, lon)
-        self.max_lat = get_max(self.max_lat, lat)
-        self.max_lon = get_max(self.max_lon, lon)
-
-    def __repr__(self):
-        return f"MIN: {self.min_lat} {self.min_lon} MAX: {self.max_lat} {self.max_lon}"
-
-
-def add_gpx_to_data(gpx: GPX, fid: str) -> None:
-    bounds = RegBounds()
-    orbounds = gpx.get_bounds()
-    if orbounds:
-        print(f"MIN: {orbounds.min_latitude} {orbounds.min_longitude} MAX: {orbounds.max_latitude} {orbounds.max_longitude}")
-    gpx_data_dir = 'index00/data/'
-    linesnum = 0
-    for track in gpx.tracks:
-        for trkseg in track.segments:
-            linesnum = len(trkseg.points)
-    linesnum += len(gpx.waypoints)
-    for route in gpx.routes:
-        linesnum += len(route.points)
-
-    with open(f"{gpx_data_dir}{fid}.dat", "w", encoding='utf-8') as fdat:
-        # with open(f"{gpx_data_dir}{fid}.dat", "w", encoding='utf-8') as fdat:
-        fdat.write(f"{linesnum}\n")
-        for track in gpx.tracks:
-            for trkseg in track.segments:
-                for trkpoint in trkseg.points:
-                    fdat.write(f"{trkpoint.latitude} {trkpoint.longitude}\n")
-                    bounds.recalc(trkpoint.latitude, trkpoint.longitude)
-        for route in gpx.routes:
-            for rtept in route.points:
-                fdat.write(f"{rtept.latitude} {rtept.longitude}\n")
-                bounds.recalc(rtept.latitude, rtept.longitude)
-        for wpt in gpx.waypoints:
-            fdat.write(f"{wpt.latitude} {wpt.longitude}\n")
-            bounds.recalc(wpt.latitude, wpt.longitude)
-        fdat.write(f"{bounds}")
 
 
 if __name__ == '__main__':
 
     # start_time = time.time()
-    pic_dir = 'angara-tmp-00'
+    pic_dir = 'angara-w'
 
     # сюда добавить описательные поля (list), которое будет выдаваться в описании выдачи
     # пик Галина, бухта Ая, итд - p-tokens, кароч! stag уходит в небытие.
@@ -211,8 +155,16 @@ if __name__ == '__main__':
     dcalc_time = 0
     parse_time = 0
 
+    start_time = time.time()
+    parse_time = 0
+    index = GPXIndex('index00')
     for pname in os.listdir(pic_dir):
         fname = f'{pic_dir}/{pname}'
+        print(fname)
         with open(fname, 'r', encoding='utf-8') as fgpx:
+            start_parse_time = time.time()
             gpx = gpxpy.parse(fgpx)
-        add_gpx_to_data(gpx, md5_checksum(fname))
+            parse_time += time.time() - start_parse_time
+        index.(gpx, md5_checksum(fname))
+    total_elapsed_time = time.time() - start_time
+    print(f"Total: {total_elapsed_time} Parse: {parse_time} ({round(100*parse_time/total_elapsed_time,2)}%)")
