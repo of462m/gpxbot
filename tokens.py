@@ -61,7 +61,7 @@ def tokenize(s: str) -> list:
     return res
 
 
-def get_wtokens(gpx: GPX):
+def get_wtokens(gpx: GPX) -> list:
     wtokens = list()
     if gpx.name:
         wtokens.append(gpx.name)
@@ -78,9 +78,9 @@ def get_wtokens(gpx: GPX):
     return tokenize(' '.join(wtokens))
 
 
-def get_ptokens(gpx: GPX):
+def get_ptokens(gpx: GPX) -> list:
     pass
 
 
-def get_rtokens(gpx: GPX):
+def get_rtokens(gpx: GPX) -> list:
     pass

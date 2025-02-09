@@ -1,3 +1,4 @@
+import gpxpy
 from gpxpy.gpx import GPX
 from regions import get_gpx_season
 
@@ -30,4 +31,8 @@ def raw_gpx(fname: str, gpx: GPX, raw_dir: str='dat/trk'):
 
 
 if __name__ == '__main__':
-    pass
+    with open("gpx/test.gpx", "r", encoding='utf-8') as fgpx:
+        gpx = gpxpy.parse(fgpx)
+    for wpt in gpx.waypoints:
+        for ext in wpt.extensions:
+            print(f"{ext.tag}: {ext.text}")

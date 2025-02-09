@@ -2,6 +2,8 @@ import hashlib
 import os
 import json
 import io
+
+import geopy.distance
 import gpxpy
 from lxml import etree
 from gpxpy.gpx import GPX
@@ -11,7 +13,7 @@ from tokens import tokenize, get_wtokens, get_ptokens, get_rtokens
 
 
 # from normalize import is_match_xml_schema
-def md5_checksum(filepath, tail: int = 8):
+def md5_checksum(filepath: str, tail: int = 8) -> str:
     hash_md5 = hashlib.md5()
     with open(filepath, "rb") as file:
         for chunk in iter(lambda: file.read(4096), b""):
@@ -27,14 +29,28 @@ def get_min(a: float, b: float) -> float:
     return a if a < b else b
 
 
+def get_sqr_region(pt: tuple, side_size: int) -> tuple:
+    d_lat = geopy.distance.geodesic(pt, (pt[0] + 0.01, pt[1])).m
+    d_lon = geopy.distance.geodesic(pt, (pt[0], pt[1] + 0.1)).m
+    # print(f"{d_lat}m {d_lon}m")
+    # 0.1 нужно динамически поднастроить исходя из масштаба
+    delta_lat = 0.01 * (side_size / 2.0) / d_lat
+    delta_lon = 0.1 * (side_size / 2.0) / d_lon
+    return round(pt[0] - delta_lat, 6), round(pt[1] - delta_lon, 6), \
+           round(pt[0] + delta_lat, 6), round(pt[1] + delta_lon, 6)
+
+
 class RegBounds:
     __slots__ = ('min_lat', 'min_lon', 'max_lat', 'max_lon',)
 
-    def __init__(self):
+    def reset(self) -> None:
         self.min_lat, self.max_lat = 90.0, -90.0
         self.min_lon, self.max_lon = 180.0, -180.0
 
-    def recalc(self, lat: float, lon: float):
+    def __init__(self):
+        self.reset()
+
+    def recalc(self, lat: float, lon: float) -> None:
         self.min_lat = get_min(self.min_lat, lat)
         self.min_lon = get_min(self.min_lon, lon)
         self.max_lat = get_max(self.max_lat, lat)
@@ -93,7 +109,6 @@ class GPXIndex:
 
     def add_gpx_to_data(self, gpx: GPX, fid: str) -> None:
         bounds = RegBounds()
-        # gpx_data_dir = 'index00/data/'
         linesnum = 0
 
         with io.StringIO() as sbuf:
@@ -112,12 +127,14 @@ class GPXIndex:
             for wpt in gpx.waypoints:
                 sbuf.write(f"{wpt.latitude} {wpt.longitude}\n")
                 bounds.recalc(wpt.latitude, wpt.longitude)
+
             sbuf.seek(0)
             with open(f"{self.__gpx_data_dir}{fid}.dat", "w", encoding='utf-8') as fdat:
                 fdat.write(f"{linesnum}\n")
                 fdat.write(f"{bounds}\n")
                 for line in sbuf.readlines():
                     fdat.write(line)
+
     def add_gpx_from_file(self, gpx_filename: str, gpx_href: str = None):
         # если gpx_href = None - размещаем у себя
         fid = md5_checksum(gpx_filename)
@@ -167,8 +184,14 @@ class GPXIndex:
     def add_gpx_from_buf(self):
         pass
 
-    def add_point(self, lat: float, lon: float, size: float, p_tokens: list):
-        pass
+    def add_points(self, gpx_points: GPX):
+        with open(f"{self.__points_dir}{gpx_points.name}.dat", "w", encoding='utf-8') as fdat:
+            for point in gpx_points.waypoints:
+                name_tokens = point.name.split()
+                size = float(name_tokens[0])
+                p_tokens = ' '.join(name_tokens[1:])
+                sqr_region = get_sqr_region((point.latitude, point.longitude), size)
+                fdat.write(f"{sqr_region[0]} {sqr_region[1]} {sqr_region[2]} {sqr_region[3]} {p_tokens}\n")
 
     def add_region(self, gpx_region: GPX, r_tokens: list):
         pass

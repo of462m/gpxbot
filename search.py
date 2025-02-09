@@ -1,12 +1,11 @@
 import math
 import os
-import io
 import geopy.distance
 import gpxpy
 from gpxpy.gpx import GPX
 import time
 from math import sin, cos, acos
-from index import md5_checksum, RegBounds, GPXIndex
+from index import md5_checksum, GPXIndex
 
 
 def get_curve_delta(pt: tuple, delta: float = 0.1):
@@ -33,17 +32,6 @@ def get_distance_simple(pt_1: tuple, pt_2: tuple):
     acos_arg = sin(rpt_1[0]) * sin(rpt_2[0]) + cos(rpt_1[0]) * cos(rpt_2[0]) * cos(rpt_1[1] - rpt_2[1])
     d = 1000 * acos(acos_arg) * 6371
     return d, time.time() - start_time
-
-
-def get_sqr_region(pt: tuple, side_size: int):
-    d_lat = geopy.distance.geodesic(pt, (pt[0] + 0.01, pt[1])).m
-    d_lon = geopy.distance.geodesic(pt, (pt[0], pt[1] + 0.1)).m
-    # print(f"{d_lat}m {d_lon}m")
-    # 0.1 нужно динамически поднастроить исходя из масштаба
-    delta_lat = 0.01 * (side_size / 2.0) / d_lat
-    delta_lon = 0.1 * (side_size / 2.0) / d_lon
-    return (round(pt[0] + delta_lat, 6), round(pt[1] - delta_lon, 6)), (
-        round(pt[0] - delta_lat, 6), round(pt[1] + delta_lon, 6))
 
 
 def sqr_region_2gpx(path: str, sqr_region: tuple):
@@ -110,51 +98,61 @@ if __name__ == '__main__':
     # пик Галина, бухта Ая, итд - p-tokens, кароч! stag уходит в небытие.
     # перевести алгоритм построения индекса в Си
     points = [
-        # {'stag': "галин", 'coords': (51.94419, 102.37698), 'size': 100},
-        # {'stag': "люб", 'coords': (51.94541, 102.43996), 'size': 100},
-        # {'stag': "дружб", 'coords': (51.95099, 102.45566), 'size': 100},
-        # {'stag': "мунк", 'coords': (51.71883, 100.59706), 'size': 100},
-        # {'stag': "нухэн", 'coords': (51.78165 100.68972), 'size': 100},
-        # {'stag': "хулугайш", 'coords': (51.74442, 100.98550), 'size': 100},
-        # {'stag': "сибизмир", 'coords': (51.75060, 100.92989), 'size': 100},
-        # {'stag': "витяз", 'coords': (51.97477, 104.10470), 'size': 200},
-        # {'stag': "идол", 'coords': (51.95990, 104.08796), 'size': 200},
-        # {'stag': "черепах", 'coords': (51.95648, 104.08997), 'size': 200},
-        # {'stag': "зеркал", 'coords': (51.97020, 104.13447), 'size': 200},
-        # {'stag': "verblud", 'coords': (51.97502, 104.14206), 'size': 200},
-        # {'stag': "starkrep", 'coords': (51.99310, 104.14044), 'size': 200},
-        # {'stag': "sk-obzor", 'coords': (51.94495, 103.91873), 'size': 200},
-        # {'stag': "ворон", 'coords': (51.94314, 103.93111), 'size': 200},
-        # {'stag': "шахтай", 'coords': (51.94209, 103.95802), 'size': 200},
-        # {'stag': "химер", 'coords': (52.12894, 103.59098), 'size': 300},
-        # {'stag': "старух", 'coords': (51.94667, 104.13498), 'size': 200},
-        # {'stag': "медвежат", 'coords': (51.96172, 104.14123), 'size': 200},
-        # {'stag': "улябор", 'coords': (51.92763, 102.64003), 'size': 100},
-        # {'stag': "серебрян", 'coords': (51.91614, 102.61360), 'size': 300},
-        # {'stag': "катьк", 'coords': (51.75186, 100.60565), 'size': 100},
-        # {'stag': "архе", 'coords': (52.00675, 105.31717), 'size': 100},
-        # {'stag': "охотнич", 'coords': (52.13878, 105.46341), 'size': 100},
-        # {'stag': "энергетик", 'coords': (51.95326, 102.50881), 'size': 100},
-        # {'stag': "новокшен", 'coords': (51.94430, 102.50823), 'size': 100},
-        # {'stag': "доктор", 'coords': (51.95279, 102.53312), 'size': 100},
-        # {'stag': "портер", 'coords': (51.96374, 102.52549), 'size': 100},
-        # {'stag': "броненос", 'coords': (51.95626, 102.47578), 'size': 100},
-        # {'stag': "трехглав", 'coords': (51.96388, 102.36955), 'size': 100},
-        # {'stag': "соан", 'coords': (51.96421, 102.23718), 'size': 100},
-        # {'stag': "царьводопад", 'coords': (51.95621, 102.36019), 'size': 300},
-        # {'stag': "мамай???", 'coords': (51.38219, 104.85779), 'size': 100},
-        # {'stag': "порожист", 'coords': (51.43389, 104.03761), 'size': 100},
-        # {'stag': "черск", 'coords': (51.51563, 103.62597), 'size': 100},
-        # {'stag': "тальцинск", 'coords': (51.35050, 104.58954), 'size': 100},
-        # {'stag': "босан", 'coords': (51.44329, 103.37566), 'size': 100},
-        # {'stag': "сердце", 'coords': (51.50997, 103.62532), 'size': 300},
-        # {'stag': "парус", 'coords': (51.73974, 103.85860), 'size': 500},
-        # {'stag': "козий", 'coords': (52.44374, 103.13353), 'size': 500},
+        {'stag': "галина", 'coords': (51.94419, 102.37698), 'size': 100},
+        {'stag': "любви", 'coords': (51.94541, 102.43996), 'size': 100},
+        {'stag': "дружба", 'coords': (51.95099, 102.45566), 'size': 100},
+        {'stag': "мунку сардык", 'coords': (51.71883, 100.59706), 'size': 100},
+        {'stag': "нухэн дабан", 'coords': (51.78165, 100.68972), 'size': 100},
+        {'stag': "хулугайша", 'coords': (51.74442, 100.98550), 'size': 100},
+        {'stag': "сибизмир", 'coords': (51.75060, 100.92989), 'size': 100},
+        {'stag': "витязь", 'coords': (51.97477, 104.10470), 'size': 200},
+        {'stag': "идол", 'coords': (51.95990, 104.08796), 'size': 200},
+        {'stag': "черепаха", 'coords': (51.95648, 104.08997), 'size': 200},
+        {'stag': "зеркала", 'coords': (51.97020, 104.13447), 'size': 200},
+        {'stag': "верблюд", 'coords': (51.97502, 104.14206), 'size': 200},
+        {'stag': "старая крепость", 'coords': (51.99310, 104.14044), 'size': 200},
+        {'stag': "скальник обзорный", 'coords': (51.94495, 103.91873), 'size': 200},
+        {'stag': "ворон", 'coords': (51.94314, 103.93111), 'size': 200},
+        {'stag': "камень шахтай", 'coords': (51.94209, 103.95802), 'size': 200},
+        {'stag': "химера", 'coords': (52.12894, 103.59098), 'size': 300},
+        {'stag': "старуха", 'coords': (51.94667, 104.13498), 'size': 200},
+        {'stag': "медвежата", 'coords': (51.96172, 104.14123), 'size': 200},
+        {'stag': "улябор", 'coords': (51.92763, 102.64003), 'size': 100},
+        {'stag': "озеро серебрянное", 'coords': (51.91614, 102.61360), 'size': 300},
+        {'stag': "катька дура октября", 'coords': (51.75186, 100.60565), 'size': 100},
+        {'stag': "архей", 'coords': (52.00675, 105.31717), 'size': 100},
+        {'stag': "пещера охотничья", 'coords': (52.13878, 105.46341), 'size': 100},
+        {'stag': "энергетик", 'coords': (51.95326, 102.50881), 'size': 100},
+        {'stag': "новокшенова", 'coords': (51.94430, 102.50823), 'size': 100},
+        {'stag': "доктор", 'coords': (51.95279, 102.53312), 'size': 100},
+        {'stag': "портер", 'coords': (51.96374, 102.52549), 'size': 100},
+        {'stag': "броненосец", 'coords': (51.95626, 102.47578), 'size': 100},
+        {'stag': "трехглавая южная башня", 'coords': (51.96388, 102.36955), 'size': 100},
+        {'stag': "со ан", 'coords': (51.96421, 102.23718), 'size': 100},
+        {'stag': "царь водопад", 'coords': (51.95621, 102.36019), 'size': 300},
+        {'stag': "большой мамайский водопад", 'coords': (51.38219, 104.85779), 'size': 100},
+        {'stag': "порожистый", 'coords': (51.43389, 104.03761), 'size': 100},
+        {'stag': "черского", 'coords': (51.51563, 103.62597), 'size': 100},
+        {'stag': "тальцинский", 'coords': (51.35050, 104.58954), 'size': 100},
+        {'stag': "босан", 'coords': (51.44329, 103.37566), 'size': 100},
+        {'stag': "озеро сердце", 'coords': (51.50997, 103.62532), 'size': 300},
+        {'stag': "парус", 'coords': (51.73974, 103.85860), 'size': 500},
+        {'stag': "пещера козий двор", 'coords': (52.44374, 103.13353), 'size': 500},
     ]
 
     dcalc_time = 0
     parse_time = 0
 
+    gpx = gpxpy.gpx.GPX()
+    gpx.name = "points"
+    for point in points:
+        gpx_wpt = gpxpy.gpx.GPXWaypoint(longitude=float(point['coords'][1]),
+                                        latitude=float(point['coords'][0]),
+                                        name=f"{point['size']} {point['stag']}")
+        gpx.waypoints.append(gpx_wpt)
+        with open("enisey/points.gpx", 'w', encoding='utf-8') as gpx_to_file:
+            gpx_to_file.write(gpx.to_xml())
+    exit(0)
     start_time = time.time()
     parse_time = 0
     index = GPXIndex('index00')
@@ -165,6 +163,6 @@ if __name__ == '__main__':
             start_parse_time = time.time()
             gpx = gpxpy.parse(fgpx)
             parse_time += time.time() - start_parse_time
-        index.(gpx, md5_checksum(fname))
+        index.add_gpx_to_data(gpx, md5_checksum(fname))
     total_elapsed_time = time.time() - start_time
     print(f"Total: {total_elapsed_time} Parse: {parse_time} ({round(100*parse_time/total_elapsed_time,2)}%)")

@@ -17,7 +17,7 @@ if __name__ == '__main__':
             if lat < mond[0]:
                 if lon > mond[1]:
                     if lon < mond[3]:
-                        gpx_wpt = gpxpy.gpx.GPXWaypoint(longitude=lon, latitude=lat,name=nam)
+                        gpx_wpt = gpxpy.gpx.GPXWaypoint(longitude=lon, latitude=lat, name=nam)
                         gpxgen.waypoints.append(gpx_wpt)
     with open("enisey/primunk.gpx", 'w', encoding='utf-8') as gpx_to_file:
         gpx_to_file.write(gpxgen.to_xml())
