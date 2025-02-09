@@ -1,17 +1,35 @@
 import gpxpy
+from gpxpy.gpx import GPX
 from index import GPXIndex
 
 
-def add_points(fname: str) -> None:
+def get_gpx(fname: str) -> GPX:
     with open(fname, "r", encoding='utf-8') as fgpx:
         try:
             gpx = gpxpy.parse(fgpx)
         except:
             print("Что-то пошло не так...")
             exit(0)
-        index = GPXIndex("index00")
-        index.add_points(gpx)
+    return gpx
+
+
+def add_points(fname: str, index: str, reindex: bool = False) -> None:
+    index = GPXIndex(index)
+    index.add_points(get_gpx(fname))
+
+
+def add_region(fname: str, index: str, reindex: bool = False) -> None:
+    pass
+
+def add_gpx_track(fname: str, index: str) -> None:
+    pass
+
+
+
+
+
+
 
 
 if __name__ == '__main__':
-    add_points("enisey/points.gpx")
+    add_points("enisey/points.gpx", "index00")

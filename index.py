@@ -186,9 +186,10 @@ class GPXIndex:
 
     def add_points(self, gpx_points: GPX):
         with open(f"{self.__points_dir}{gpx_points.name}.dat", "w", encoding='utf-8') as fdat:
+            fdat.write(f"{len(gpx_points.waypoints)}\n")
             for point in gpx_points.waypoints:
                 name_tokens = point.name.split()
-                size = float(name_tokens[0])
+                size = int(name_tokens[0])
                 p_tokens = ' '.join(name_tokens[1:])
                 sqr_region = get_sqr_region((point.latitude, point.longitude), size)
                 fdat.write(f"{sqr_region[0]} {sqr_region[1]} {sqr_region[2]} {sqr_region[3]} {p_tokens}\n")
