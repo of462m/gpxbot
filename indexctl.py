@@ -30,7 +30,7 @@ def add_gpx_track(fname: str, index: str) -> None:
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('cmd', type=str, help='command')
-    parser.add_argument('obj', type=str, help='object')
+    parser.add_argument('obj', type=str, help='object: points | region', choices=['points', 'regions'])
     parser.add_argument('filename', type=str, help='filename')
     parser.add_argument('--reindex', action="store_true")
     args = parser.parse_args()
