@@ -1,3 +1,4 @@
+import argparse
 import gpxpy
 from gpxpy.gpx import GPX
 from index import GPXIndex
@@ -21,15 +22,16 @@ def add_points(fname: str, index: str, reindex: bool = False) -> None:
 def add_region(fname: str, index: str, reindex: bool = False) -> None:
     pass
 
+
 def add_gpx_track(fname: str, index: str) -> None:
     pass
 
 
-
-
-
-
-
-
 if __name__ == '__main__':
-    add_points("enisey/points.gpx", "index00")
+    parser = argparse.ArgumentParser()
+    parser.add_argument('cmd', type=str, help='command')
+    parser.add_argument('obj', type=str, help='object')
+    parser.add_argument('filename', type=str, help='filename')
+    args = parser.parse_args()
+    print(args.cmd)
+    # add_points("enisey/points.gpx", "index00")
