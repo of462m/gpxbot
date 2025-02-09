@@ -32,6 +32,9 @@ if __name__ == '__main__':
     parser.add_argument('cmd', type=str, help='command')
     parser.add_argument('obj', type=str, help='object')
     parser.add_argument('filename', type=str, help='filename')
+    parser.add_argument('--reindex')
     args = parser.parse_args()
     print(args.cmd)
+    if args.reindex:
+        print("REINDEX")
     # add_points("enisey/points.gpx", "index00")
