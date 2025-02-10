@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
 	struct dirent *dir_ent;
 	wpt cpoint,dpoint;
 	region reg;
-	sqr_region sreg;
+	sqr_region sreg00, sreg01;
 
 /*
 	dir = opendir("/home/taras");
@@ -22,20 +22,19 @@ int main(int argc, char *argv[]) {
 		printf("%s\n",dir_ent->d_name);
 	}
 */
-	cpoint.lat=51.86503;
-	cpoint.lon=104.74051;
-	dpoint.lat=51.86662;
-	dpoint.lon=104.74026;
+	cpoint.lat=51.95099;
+	cpoint.lon=102.45566;
 
-	get_sqr_region(cpoint,400.0,&sreg);
-	printf("%lf %lf\n", cpoint.lat, cpoint.lon);
-	printf("%lf %lf\n", sreg.min.lat, sreg.min.lon);
-	printf("%lf %lf\n", sreg.max.lat, sreg.min.lon);
-	printf("%lf %lf\n", sreg.max.lat, sreg.max.lon);
-	printf("%lf %lf\n", sreg.min.lat, sreg.max.lon);
-	
-	printf("[%i]\n",is_wpt_in_sqr_region(cpoint,sreg));
-	printf("[%i]\n",is_wpt_in_sqr_region(dpoint,sreg));
+	dpoint.lat=51.94419;
+	dpoint.lon=102.37698;
+
+
+	get_sqr_region(cpoint,100.0,&sreg00);
+	get_sqr_region(dpoint,100.0,&sreg01);
+//	get_sqr_region(sreg00.min,5000.0,&sreg01);
+
+	if (is_intersect_sqr(sreg01,sreg00)) printf("YES\n");
+	else printf("NO\n");
 
 	return 0;
 

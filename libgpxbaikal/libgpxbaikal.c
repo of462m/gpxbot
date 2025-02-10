@@ -63,14 +63,11 @@ void get_sqr_region(wpt pt, double side, sqr_region *sreg) {
 }
 
 int is_intersect_sqr(sqr_region sqr01, sqr_region sqr02) {	
-	wpt p0, p1;
-	p0.lat = sqr01.max.lat; p0.lon = sqr01.min.lon;
-	p1.lat = sqr01.min.lat; p1.lon = sqr01.max.lon;
-	if (is_wpt_in_sqr_region(sqr01.min, sqr02)) return 1;
-	if (is_wpt_in_sqr_region(sqr01.max, sqr02)) return 1;
-	if (is_wpt_in_sqr_region(p0, sqr02)) return 1;
-	if (is_wpt_in_sqr_region(p1, sqr02)) return 1;
-	return 0;
+	if (sqr01.min.lat > sqr02.max.lat ||
+	    sqr02.min.lat > sqr01.max.lat ||
+    	    sqr01.min.lon > sqr02.max.lon ||
+	    sqr02.min.lon > sqr01.max.lon) return 0;
+	return 1;
 }
 
 int is_wpt_in_sqr_region(wpt pt,sqr_region sreg) {
