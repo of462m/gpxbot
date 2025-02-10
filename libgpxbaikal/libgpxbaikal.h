@@ -4,6 +4,8 @@
 typedef struct {
 	double lat;
 	double lon;
+//	double ele;
+//	int time;
 } wpt;
 
 typedef struct {
@@ -51,6 +53,7 @@ double get_phi(vec a, vec b);
 
 void get_sqr_region(wpt pt, double side, sqr_region *sreg);
 
+int is_intersect_sqr(sqr_region sqr01, sqr_region sqr02);
 int is_wpt_in_sqr_region(wpt pt, sqr_region sreg);
 int is_wpt_in_region(wpt pt, region reg);
 
