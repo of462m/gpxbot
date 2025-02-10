@@ -2,6 +2,12 @@
 #define _MYLIB_H_
 
 typedef struct {
+	double x;
+	double y;
+	double r;
+} vec;
+
+typedef struct {
 	double lat;
 	double lon;
 //	double ele;
@@ -9,21 +15,15 @@ typedef struct {
 } wpt;
 
 typedef struct {
-	double x;
-	double y;
-	double r;
-} vec;
-
-typedef struct {
-	int n;
-//	sqr_region bounds;
-	wpt *points;
-} trk;
-
-typedef struct {
 	wpt min; // (min.lat,min.lon)
 	wpt max; // (max.lat,max.lon)
 } sqr_region;
+
+typedef struct {
+	int n;
+	sqr_region bounds;
+	wpt *points;
+} trk;
 
 typedef struct {
 	int n;
