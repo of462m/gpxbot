@@ -80,7 +80,7 @@ int is_wpt_in_sqr_region(wpt pt,sqr_region sreg) {
 }
 
 int is_trk_in_sqr_region(trk tr,sqr_region sreg) {
-// use trk.bounds & region.bounds to find their intersection first
+	if (!is_intersect_sqr(tr.bounds, sreg)) return 0;
 
 	for (int i=0; i<tr.n; i++) 
 		if (is_wpt_in_sqr_region(tr.points[i],sreg))
