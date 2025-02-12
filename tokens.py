@@ -57,8 +57,8 @@ def tokenize(s: str) -> list:
         for token in word.split():
             if len(token) > 1 and token not in [*pr, *strava, *mon, *mday, *trash]:
                 res.append(token)
-                res = list(dict.fromkeys(res))
-    return res
+                # res = list(dict.fromkeys(res))
+    return list(set(res))
 
 
 def get_wtokens(gpx: GPX) -> list:

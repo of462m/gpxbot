@@ -101,7 +101,8 @@ class GPXIndex:
                 for fname in os.listdir(f"{self.__wtrie_dir}{wtrie_path}"):
                     if os.path.isfile(f"{self.__wtrie_dir}{wtrie_path}/{fname}"):
                         token_fids.append(fname)
-        return list(dict.fromkeys(token_fids))
+        # return list(dict.fromkeys(token_fids))
+        return list(set(token_fids))
 
     def __get_from_json(self, fid: str) -> dict:
         with open(f"{self.__index_dir}{fid}.json", "r", encoding='utf-8') as ff:

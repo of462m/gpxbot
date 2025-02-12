@@ -29,12 +29,14 @@ def add_gpx_track(fname: str, index: str) -> None:
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('cmd', type=str, help='command')
-    parser.add_argument('obj', type=str, help='object: points | region', choices=['points', 'regions'])
-    parser.add_argument('filename', type=str, help='filename')
-    parser.add_argument('--reindex', action="store_true")
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('-g', '--gpx', action='store_true', help='Operate with gpx-tracks')
+    group.add_argument('-p', '--points', action='store_true', help='Operate with gpx-formatted POINTS files')
+    group.add_argument('-r', '--regions', action='store_true', help='Operate with gpx-formatted REGIONS files')
+    parser.add_argument('-s', '--src', help='Source directory', required=True)
+    parser.add_argument('-d', '--dst', help='Destination directory', required=True)
     args = parser.parse_args()
-    print(args.cmd)
-    if args.reindex:
-        print("REINDEX")
+    print(args.__dict__)
+    # if args.reindex:
+    #     print("REINDEX")
     # add_points("enisey/points.gpx", "index00")
