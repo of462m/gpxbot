@@ -33,8 +33,7 @@ int main(int argc, char *argv[]) {
 	get_sqr_region(dpoint,100.0,&sreg01);
 //	get_sqr_region(sreg00.min,5000.0,&sreg01);
 
-	if (is_intersect_sqr(sreg01,sreg00)) printf("YES\n");
-	else printf("NO\n");
+	is_intersect_sqr(sreg01,sreg00) ? printf("YES\n") : printf("NO\n");
 
 	return 0;
 
