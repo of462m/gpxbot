@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
 	dpoint.lon=102.37698;
 
 
-	get_sqr_region(cpoint,100.0,&sreg00);
+	get_sqr_region(cpoint,1000.0,&sreg00);
 	get_sqr_region(dpoint,100.0,&sreg01);
 //	get_sqr_region(sreg00.min,5000.0,&sreg01);
 

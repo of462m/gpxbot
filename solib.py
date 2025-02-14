@@ -10,6 +10,12 @@ class wpt(ctypes.Structure):
 
 if __name__ == '__main__':
     test = ctypes.CDLL('/usr/lib/libgpxbaikal.so')
+    test.fillmeup.restype = ctypes.c_voidp
+    mystr = (ctypes.c_char * 256)()
+    test.fillmeup(mystr)
+    tokens = mystr.value.decode('utf-8').split()
+    print(tokens)
+    exit(0)
 
     #	test.deg2rad.restype = ctypes.c_void_p
     #	test.deg2rad.argtypes = [ctypes.POINTER(wpt)]

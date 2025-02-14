@@ -61,5 +61,6 @@ int is_trk_in_sqr_region(trk tr, sqr_region sreg);
 int is_trk_in_region(trk tr, region reg);
 
 void print_string(char *s);
+void fillmeup(char *s);
 
 #endif /* !_MYLIB_H_ */

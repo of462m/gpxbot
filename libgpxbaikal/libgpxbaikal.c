@@ -117,3 +117,7 @@ int is_trk_in_region(trk tr,region reg) {
 void print_string(char *s) {
 	printf("-----\n%s\n-----\n",s);
 }
+
+void fillmeup(char *s) {
+	sprintf(s,"%s", "один два несколько");
+}
