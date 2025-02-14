@@ -63,6 +63,7 @@ int is_trk_in_region(trk tr, region reg);
 void print_string(char *s);
 void fillmeup(char *s);
 
+int load_track(char *gpxdatafile, trk *track);
 int get_ptokens(char *pdir, char *gpxdatafile, char *ptokens);
 
 #endif /* !_MYLIB_H_ */

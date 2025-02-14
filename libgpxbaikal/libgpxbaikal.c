@@ -82,7 +82,6 @@ int is_wpt_in_sqr_region(wpt pt,sqr_region sreg) {
 
 int is_trk_in_sqr_region(trk tr,sqr_region sreg) {
 	if (!is_intersect_sqr(tr.bounds, sreg)) return 0;
-
 	for (int i=0; i<tr.n; i++) 
 		if (is_wpt_in_sqr_region(tr.points[i],sreg))
 			return 1;
@@ -138,21 +137,32 @@ int load_track(char *gpxdatafile, trk *track) {
 int get_ptokens(char *pdir, char *gpxdatafile, char *ptokens) {
 	DIR *dir;
 	FILE *fgpx, *fpoints;
+	int i,n;
 	struct dirent *dir_ent;
-	char *fname;
-	char **tokens;
-	sqr_region **points;
+	char fname[256];
+	char tokens[256];
+	sqr_region point;
 	trk track;
-	
-	load_track(gpxdatafile, &track);
+
+	strcpy(ptokens,"");
+
 	dir = opendir(pdir);		
 	if (dir == NULL) return 0;
+	load_track(gpxdatafile, &track);
 	while ((dir_ent = readdir(dir))) {
 		if (strcmp(".",dir_ent->d_name) && strcmp("..",dir_ent->d_name)) {
-		//	sprintf(fname,"data/%s",dir_ent->d_name);
-			printf("pechpech/%s\n",dir_ent->d_name);
+			sprintf(fname,"%s/%s",pdir,dir_ent->d_name);
+			fpoints = fopen(fname, "r");
+				fscanf(fpoints,"%i",&n);
+				for(i=0; i<n; i++) {
+					strcpy(tokens,"");
+					fscanf(fpoints,"%lf %lf %lf %lf %255[^\r\n]", &point.min.lat, &point.min.lon, &point.max.lat, &point.max.lon, tokens);
+					if (is_trk_in_sqr_region(track,point)) sprintf(ptokens,"%s %s",ptokens,tokens);
+				}
+			fclose(fpoints);
 		}
 	}
+	free(track.points);
 	return 1;
 }
 
