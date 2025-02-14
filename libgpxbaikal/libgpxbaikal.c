@@ -89,7 +89,7 @@ int is_trk_in_sqr_region(trk tr,sqr_region sreg) {
 }
 
 int is_wpt_in_region(wpt pt,region reg) {
-//	if (!is_wpt_in_sqr_region(pt,reg.bounds)) return 0;
+	if (!is_wpt_in_sqr_region(pt,reg.bounds)) return 0;
 	double angle = 0.0;
 	vec v0,v,vnext;
 
@@ -108,6 +108,7 @@ int is_wpt_in_region(wpt pt,region reg) {
 }
 
 int is_trk_in_region(trk tr,region reg) {
+	if (!is_intersect_sqr(tr.bounds,reg.bounds)) return 0;
 	for (int i=0; i<tr.n; i++)
 		if (is_wpt_in_region(tr.points[i],reg))
 			return 1;
