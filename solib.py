@@ -10,11 +10,21 @@ class wpt(ctypes.Structure):
 
 if __name__ == '__main__':
     test = ctypes.CDLL('/usr/lib/libgpxbaikal.so')
-    test.fillmeup.restype = ctypes.c_voidp
+
     mystr = (ctypes.c_char * 256)()
+    test.fillmeup.argtypes = [ctypes.c_char_p]
     test.fillmeup(mystr)
     tokens = mystr.value.decode('utf-8').split()
     print(tokens)
+
+    test.print_string.argtypes = [ctypes.c_char_p]
+    bystr = "index00/data/090e0f09.dat и по-русски рохи".encode('utf-8')
+    test.print_string(bystr)
+
+    dire = "index00/data".encode('utf-8')
+    test.get_ptokens.argtypes = [ctypes.c_char_p,ctypes.c_char_p,ctypes.c_char_p]
+    test.get_ptokens.restype = ctypes.c_int
+    print(100 + test.get_ptokens(dire,dire,dire))
     exit(0)
 
     #	test.deg2rad.restype = ctypes.c_void_p

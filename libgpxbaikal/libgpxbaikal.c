@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <dirent.h>
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <unistd.h>
@@ -121,3 +122,37 @@ void print_string(char *s) {
 void fillmeup(char *s) {
 	sprintf(s,"%s", "один два несколько");
 }
+
+int load_track(char *gpxdatafile, trk *track) {
+	FILE *fgpx;
+	fgpx = fopen(gpxdatafile, "r");
+		fscanf(fgpx,"%i",&track->n);
+		fscanf(fgpx,"%lf %lf %lf %lf",&track->bounds.min.lat, &track->bounds.min.lon, &track->bounds.max.lat, &track->bounds.max.lon);
+		track->points = (wpt *)malloc(track->n*sizeof(wpt));
+		for(int i=0; i<track->n; i++) 
+			fscanf(fgpx,"%lf %lf", &track->points[i].lat, &track->points[i].lon);
+	fclose(fgpx);
+	return 1;
+}
+
+int get_ptokens(char *pdir, char *gpxdatafile, char *ptokens) {
+	DIR *dir;
+	FILE *fgpx, *fpoints;
+	struct dirent *dir_ent;
+	char *fname;
+	char **tokens;
+	sqr_region **points;
+	trk track;
+	
+	load_track(gpxdatafile, &track);
+	dir = opendir(pdir);		
+	if (dir == NULL) return 0;
+	while ((dir_ent = readdir(dir))) {
+		if (strcmp(".",dir_ent->d_name) && strcmp("..",dir_ent->d_name)) {
+		//	sprintf(fname,"data/%s",dir_ent->d_name);
+			printf("pechpech/%s\n",dir_ent->d_name);
+		}
+	}
+	return 1;
+}
+
