@@ -129,9 +129,24 @@ int load_track(char *gpxdatafile, trk *track) {
 		fscanf(fgpx,"%i",&track->n);
 		fscanf(fgpx,"%lf %lf %lf %lf",&track->bounds.min.lat, &track->bounds.min.lon, &track->bounds.max.lat, &track->bounds.max.lon);
 		track->points = (wpt *)malloc(track->n*sizeof(wpt));
-		for(int i=0; i<track->n; i++) 
+		for(int i=0; i < track->n; i++) 
 			fscanf(fgpx,"%lf %lf", &track->points[i].lat, &track->points[i].lon);
 	fclose(fgpx);
+	return 1;
+}
+
+int load_region(char *regdatafile, region *reg) {
+	FILE *freg;
+	freg = fopen(regdatafile, "r");
+		strcpy(reg->tokens,"");
+		fscanf(freg,"%i",&reg->n);
+		reg->n -= 1;
+		fscanf(freg,"%255[^\r\n]",reg->tokens);
+		fscanf(freg,"%lf %lf %lf %lf",&reg->bounds.min.lat, &reg->bounds.min.lon, &reg->bounds.max.lat, &reg->bounds.max.lon);
+		reg->points = (wpt *)malloc(reg->n*sizeof(wpt));
+		for(int i=0; i < reg->n; i++) 
+			fscanf(freg,"%lf %lf", &reg->points[i].lat, &reg->points[i].lon);
+	fclose(freg);
 	return 1;
 }
 

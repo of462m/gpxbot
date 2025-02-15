@@ -29,10 +29,12 @@ typedef struct {
 	int n;
 	sqr_region bounds;
 	wpt *points;
+	char tokens[256];
 } region;
 /*
 REGION FILE FORMAT:
 n - size of region array
+token1 token2 token3 - tokens
 min.lat min.lon max.lat max.lon - bounds
 lat lon
 lat lon
@@ -64,6 +66,8 @@ void print_string(char *s);
 void fillmeup(char *s);
 
 int load_track(char *gpxdatafile, trk *track);
+int load_region(char *regdatafile, region *reg);
+
 int get_ptokens(char *pdir, char *gpxdatafile, char *ptokens);
 
 #endif /* !_MYLIB_H_ */
