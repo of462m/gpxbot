@@ -13,12 +13,26 @@ from tokens import tokenize, get_wtokens, get_ptokens, get_rtokens
 
 
 # from normalize import is_match_xml_schema
+
+class LoadGpxExtention(Exception):
+    pass
+
+
 def md5_checksum(filepath: str, tail: int = 8) -> str:
     hash_md5 = hashlib.md5()
     with open(filepath, "rb") as file:
         for chunk in iter(lambda: file.read(4096), b""):
             hash_md5.update(chunk)
     return hash_md5.hexdigest()[-tail:]
+
+
+def load_gpx(gpx_filename: str) -> GPX:
+    with open(gpx_filename, "r", encoding='utf-8') as fgpx:
+        try:
+            gpx = gpxpy.parse(fgpx)
+        except:
+            raise LoadGpxExtention(f"Parse error: {gpx_filename}")
+    return gpx
 
 
 def get_max(a: float, b: float) -> float:
@@ -185,18 +199,39 @@ class GPXIndex:
     def add_gpx_from_buf(self):
         pass
 
-    def add_points(self, gpx_points: GPX):
-        with open(f"{self.__points_dir}{gpx_points.name}.dat", "w", encoding='utf-8') as fdat:
-            fdat.write(f"{len(gpx_points.waypoints)}\n")
-            for point in gpx_points.waypoints:
-                name_tokens = point.name.split()
-                size = int(name_tokens[0])
-                p_tokens = ' '.join(name_tokens[1:])
-                sqr_region = get_sqr_region((point.latitude, point.longitude), size)
-                fdat.write(f"{sqr_region[0]} {sqr_region[1]} {sqr_region[2]} {sqr_region[3]} {p_tokens}\n")
+    def add_points(self, points_filepath: str, reindex: bool = False):
+        try:
+            gpx_points = load_gpx(points_filepath)
+            filename = f"{md5_checksum(points_filepath)}.dat"
+            with open(f"{self.__points_dir}{filename}", "w", encoding='utf-8') as fdat:
+                fdat.write(f"{len(gpx_points.waypoints)}\n")
+                for point in gpx_points.waypoints:
+                    name_tokens = point.name.split()
+                    size = int(name_tokens[0])
+                    p_tokens = ' '.join(name_tokens[1:])
+                    sqr_region = get_sqr_region((point.latitude, point.longitude), size)
+                    fdat.write(f"{sqr_region[0]} {sqr_region[1]} {sqr_region[2]} {sqr_region[3]} {p_tokens}\n")
+        except LoadGpxExtention as e:
+            print(e)
 
-    def add_region(self, gpx_region: GPX, r_tokens: list):
-        pass
+    def add_region(self, region_filepath: str, reindex: bool = False):
+        try:
+            gpx_region = load_gpx(region_filepath)
+            bounds = RegBounds()
+            filename = f"{md5_checksum(region_filepath)}.dat"
+            with io.StringIO() as sbuf:
+                for point in gpx_region.tracks[0].segments[0].points:
+                    sbuf.write(f"{point.latitude} {point.longitude}\n")
+                    bounds.recalc(point.latitude,point.longitude)
+                sbuf.seek(0)
+                with open(f"{self.__regions_dir}{filename}", "w", encoding='utf-8') as fdat:
+                    fdat.write(f"{len(gpx_region.tracks[0].segments[0].points)}\n")
+                    fdat.write(f"{gpx_region.tracks[0].name}\n")
+                    fdat.write(f"{bounds}\n")
+                    for line in sbuf.readlines():
+                        fdat.write(line)
+        except LoadGpxExtention as e:
+            print(e)
 
     def search(self, tokens_str: str):
         tokens = tokenize(tokens_str)
