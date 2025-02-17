@@ -78,9 +78,3 @@ def get_wtokens(gpx: GPX) -> list:
     return tokenize(' '.join(wtokens))
 
 
-def get_ptokens(gpx: GPX) -> list:
-    pass
-
-
-def get_rtokens(gpx: GPX) -> list:
-    pass
