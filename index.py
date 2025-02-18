@@ -10,6 +10,7 @@ from gpxpy.gpx import GPX
 from Levenshtein import jaro_winkler, distance as l_distance
 
 from tokens import tokenize, get_wtokens
+# from clib import clib_get_ptokens, clib_get_rtokens
 
 
 # from normalize import is_match_xml_schema
@@ -128,11 +129,12 @@ class GPXIndex:
         with open(f"{self.__index_dir}{fid}", "r", encoding='utf-8') as ff:
             return json.load(ff)
 
-    def get_ptokens(self, gpx: GPX) -> list:
-        pass
-
-    def get_rtokens(self, gpx: GPX) -> list:
-        pass
+    # def get_ptokens(self, fid: str) -> list:
+    #     return clib_get_ptokens(f"{self.__gpx_tracks_dir}{fid}", self.__points_dir)
+    #
+    #
+    # def get_rtokens(self, fid: str) -> list:
+    #     return list()
 
     def add_gpx_to_data(self, gpx: GPX, fid: str) -> None:
         bounds = RegBounds()
@@ -162,13 +164,12 @@ class GPXIndex:
                 for line in sbuf.readlines():
                     fdat.write(line)
 
-    def add_gpx_from_file(self, gpx_filename: str, gpx_href: str = None):
+    def add_track(self, gpx_filename: str, gpx_href: str = None):
         # если gpx_href = None - размещаем у себя
         fid = md5_checksum(gpx_filename)
         if os.path.isfile(f"{self.__index_dir}/{fid}"):
             print(f"File {gpx_filename} md5-hash: {fid} exists.")
             return None
-
         fjson = {"id": fid, "filename": os.path.split(gpx_filename)[1], "url": gpx_href, }
 
         # fjson.update({"author-tg-id": author_tg_id, "author-tg-name": author_tg_name})
@@ -179,6 +180,7 @@ class GPXIndex:
         # fjson.update({"match-gpx-xml-schema": is_match_gpx_xml_schema(?)})
 
         gpx = load_gpx(gpx_filename)
+        self.add_gpx_to_data(gpx, fid)
         fjson.update({"gpx-version": gpx.version})
         if gpx.name:
             fjson.update({"gpx-name": gpx.name})
@@ -188,14 +190,14 @@ class GPXIndex:
         if len(wtokens):
             self.__add_to_wtrie(fid, wtokens)
             fjson.update({"w-tokens": wtokens})
-        ptokens = self.get_ptokens(gpx)
+        ptokens = self.get_ptokens(fid)
         if len(ptokens):
             self.__add_to_wtrie(fid, ptokens)
             fjson.update({"p-tokens": ptokens})
-        rtokens = self.get_rtokens(gpx)
-        if len(rtokens):
-            self.__add_to_wtrie(fid, rtokens)
-            fjson.update({"r-tokens": rtokens})
+        # rtokens = self.get_rtokens(fid)
+        # if len(rtokens):
+        #     self.__add_to_wtrie(fid, rtokens)
+        #     fjson.update({"r-tokens": rtokens})
 
         with open(f"{self.__index_dir}/{fid}", "w") as ff:
             json.dump(fjson, ff, sort_keys=False, ensure_ascii=False, indent=3)
@@ -275,11 +277,11 @@ class GPXIndex:
 
 if __name__ == '__main__':
 
-    index = GPXIndex("index")
+    index = GPXIndex("vindex")
 
     for fname in os.listdir("angara-w"):
         gpx_fname = f"angara-w/{fname}"
         gpx_href_fname = f"angara-l/{fname.split('.')[0]}.href"
         with open(gpx_href_fname, "r") as fhref:
             url = fhref.readline().strip('\n')
-        index.add_gpx_from_file(gpx_fname, url)
+        index.add_track(gpx_fname, url)
