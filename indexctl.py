@@ -21,7 +21,8 @@ def add_gpx(gpx_fname: str, gtype: str, index_name: str, reindex: bool = False) 
         return 0
     index = GPXIndex(full_index_dirname)
     if gtype == "trk":
-        pass
+        for fname in files_to_add:
+            index.add_track(fname)
     elif gtype == "pt":
         for fname in files_to_add:
             index.add_points(fname, reindex)

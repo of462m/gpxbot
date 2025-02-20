@@ -10,7 +10,7 @@ from gpxpy.gpx import GPX
 from Levenshtein import jaro_winkler, distance as l_distance
 
 from tokens import tokenize, get_wtokens
-# from clib import clib_get_ptokens, clib_get_rtokens
+from clib import clib_get_ptokens, clib_get_rtokens
 
 
 # from normalize import is_match_xml_schema
@@ -129,10 +129,10 @@ class GPXIndex:
         with open(f"{self.__index_dir}{fid}", "r", encoding='utf-8') as ff:
             return json.load(ff)
 
-    # def get_ptokens(self, fid: str) -> list:
-    #     return clib_get_ptokens(f"{self.__gpx_tracks_dir}{fid}", self.__points_dir)
-    #
-    #
+    def get_ptokens(self, fid: str) -> list:
+        return clib_get_ptokens(f"{self.__gpx_tracks_dir}{fid}", self.__points_dir)
+
+
     # def get_rtokens(self, fid: str) -> list:
     #     return list()
 
@@ -164,7 +164,7 @@ class GPXIndex:
                 for line in sbuf.readlines():
                     fdat.write(line)
 
-    def add_track(self, gpx_filename: str, gpx_href: str = None):
+    def add_track(self, gpx_filename: str, gpx_href: str = "https://gpxbaikal.ru/db/my.gpx"):
         # если gpx_href = None - размещаем у себя
         fid = md5_checksum(gpx_filename)
         if os.path.isfile(f"{self.__index_dir}/{fid}"):
@@ -279,9 +279,11 @@ if __name__ == '__main__':
 
     index = GPXIndex("vindex")
 
-    for fname in os.listdir("angara-w"):
-        gpx_fname = f"angara-w/{fname}"
-        gpx_href_fname = f"angara-l/{fname.split('.')[0]}.href"
-        with open(gpx_href_fname, "r") as fhref:
-            url = fhref.readline().strip('\n')
-        index.add_track(gpx_fname, url)
+
+
+    # for fname in os.listdir("angara-w"):
+    #     gpx_fname = f"angara-w/{fname}"
+    #     gpx_href_fname = f"angara-l/{fname.split('.')[0]}.href"
+    #     with open(gpx_href_fname, "r") as fhref:
+    #         url = fhref.readline().strip('\n')
+    #     index.add_track(gpx_fname, url)
