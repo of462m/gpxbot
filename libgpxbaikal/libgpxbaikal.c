@@ -155,8 +155,8 @@ int get_ptokens(char *pdir, char *gpxdatafile, char *ptokens) {
 	FILE *fgpx, *fpoints;
 	int i,n;
 	struct dirent *dir_ent;
-	char fname[256];
-	char tokens[256];
+	char fname[2048];
+	char tokens[512];
 	sqr_region point;
 	trk track;
 
