@@ -69,5 +69,6 @@ int load_track(char *gpxdatafile, trk *track);
 int load_region(char *regdatafile, region *reg);
 
 int get_ptokens(char *pdir, char *gpxdatafile, char *ptokens);
+int get_rtokens(char *rdir, char *gpxdatafile, char *rtokens);
 
 #endif /* !_MYLIB_H_ */

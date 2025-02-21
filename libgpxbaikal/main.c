@@ -16,6 +16,11 @@ int main(int argc, char *argv[]) {
 	region reg;
 	sqr_region sreg00, sreg01;
 
+	char tokens[2048];
+	get_rtokens("/home/taras/gpxbaikal/gpxbot/vindex/dat/regions","03b5a1e8",tokens);
+	printf("%s\n", tokens);
+	return 1;
+
 /*
 	dir = opendir("/home/taras");
 	while ((dir_ent = readdir(dir))) {

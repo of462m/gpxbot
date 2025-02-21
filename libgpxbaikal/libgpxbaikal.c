@@ -152,7 +152,7 @@ int load_region(char *regdatafile, region *reg) {
 
 int get_ptokens(char *pdir, char *gpxdatafile, char *ptokens) {
 	DIR *dir;
-	FILE *fgpx, *fpoints;
+	FILE *fpoints;
 	int i,n;
 	struct dirent *dir_ent;
 	char fname[2048];
@@ -180,5 +180,29 @@ int get_ptokens(char *pdir, char *gpxdatafile, char *ptokens) {
 	}
 	free(track.points);
 	return 1;
+}
+
+int get_rtokens(char *rdir, char *gpxdatafile, char *rtokens) {
+        DIR *dir;
+        int i,n;
+        struct dirent *dir_ent;
+        char fname[2048];
+        region reg;
+        trk track;
+
+        strcpy(rtokens,"");
+
+        dir = opendir(rdir);
+        if (dir == NULL) return 0;
+        load_track(gpxdatafile, &track);
+        while ((dir_ent = readdir(dir))) {
+                if (strcmp(".",dir_ent->d_name) && strcmp("..",dir_ent->d_name)) {
+                        sprintf(fname,"%s/%s",rdir,dir_ent->d_name);
+			load_region(fname, &reg);
+			if (is_trk_in_region(track,reg)) sprintf(rtokens,"%s %s",rtokens,reg.tokens);
+                }
+        }
+        free(track.points);
+        return 1;
 }
 
