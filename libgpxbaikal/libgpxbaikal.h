@@ -29,7 +29,7 @@ typedef struct {
 	int n;
 	sqr_region bounds;
 	wpt *points;
-	char tokens[256];
+	char tokens[512];
 } region;
 /*
 REGION FILE FORMAT:

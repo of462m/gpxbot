@@ -15,10 +15,11 @@ int main(int argc, char *argv[]) {
 	wpt cpoint,dpoint;
 	region reg;
 	sqr_region sreg00, sreg01;
-
+	int n;
 	char tokens[2048];
+
 	get_rtokens("/home/taras/gpxbaikal/gpxbot/vindex/dat/regions","03b5a1e8",tokens);
-	printf("%s\n", tokens);
+	printf("[%s]\n", tokens);
 	return 1;
 
 /*

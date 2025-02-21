@@ -137,11 +137,12 @@ int load_track(char *gpxdatafile, trk *track) {
 
 int load_region(char *regdatafile, region *reg) {
 	FILE *freg;
+	int chop;
 	freg = fopen(regdatafile, "r");
 		strcpy(reg->tokens,"");
 		fscanf(freg,"%i",&reg->n);
 		reg->n -= 1;
-		fscanf(freg,"%255[^\r\n]",reg->tokens);
+		fscanf(freg,"%i %256[^\r\n]",&chop,reg->tokens);
 		fscanf(freg,"%lf %lf %lf %lf",&reg->bounds.min.lat, &reg->bounds.min.lon, &reg->bounds.max.lat, &reg->bounds.max.lon);
 		reg->points = (wpt *)malloc(reg->n*sizeof(wpt));
 		for(int i=0; i < reg->n; i++) 
@@ -200,6 +201,7 @@ int get_rtokens(char *rdir, char *gpxdatafile, char *rtokens) {
                         sprintf(fname,"%s/%s",rdir,dir_ent->d_name);
 			load_region(fname, &reg);
 			if (is_trk_in_region(track,reg)) sprintf(rtokens,"%s %s",rtokens,reg.tokens);
+			free(reg.points);
                 }
         }
         free(track.points);

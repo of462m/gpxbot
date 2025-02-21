@@ -239,7 +239,7 @@ class GPXIndex:
                 sbuf.seek(0)
                 with open(f"{self.__regions_dir}{filename}", "w", encoding='utf-8') as fdat:
                     fdat.write(f"{len(gpx_region.tracks[0].segments[0].points)}\n")
-                    fdat.write(f"{gpx_region.tracks[0].name}\n")
+                    fdat.write(f"0 {gpx_region.tracks[0].name}\n")
                     fdat.write(f"{bounds}\n")
                     for line in sbuf.readlines():
                         fdat.write(line)
