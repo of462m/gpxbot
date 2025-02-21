@@ -94,14 +94,12 @@ class GPXIndex:
         self.__points_dir = f"{root_dir}/dat/points/"
         self.__regions_dir = f"{root_dir}/dat/regions/"
 
-
         if not os.path.isdir(root_dir):
             os.makedirs(self.__index_dir)
             os.makedirs(self.__wtrie_dir)
             os.makedirs(self.__gpx_tracks_dir)
             os.makedirs(self.__points_dir)
             os.makedirs(self.__regions_dir)
-
 
         self.__gpx10_xmlschema_doc = etree.parse('gpx10.xsd')
         self.__gpx10_xmlschema = etree.XMLSchema(self.__gpx10_xmlschema_doc)
@@ -132,9 +130,8 @@ class GPXIndex:
     def get_ptokens(self, fid: str) -> list:
         return clib_get_ptokens(f"{self.__gpx_tracks_dir}{fid}", self.__points_dir)
 
-
-    # def get_rtokens(self, fid: str) -> list:
-    #     return list()
+    def get_rtokens(self, fid: str) -> list:
+        return clib_get_rtokens(f"{self.__gpx_tracks_dir}{fid}", self.__regions_dir)
 
     def add_gpx_to_data(self, gpx: GPX, fid: str) -> None:
         bounds = RegBounds()
@@ -194,10 +191,10 @@ class GPXIndex:
         if len(ptokens):
             self.__add_to_wtrie(fid, ptokens)
             fjson.update({"p-tokens": ptokens})
-        # rtokens = self.get_rtokens(fid)
-        # if len(rtokens):
-        #     self.__add_to_wtrie(fid, rtokens)
-        #     fjson.update({"r-tokens": rtokens})
+        rtokens = self.get_rtokens(fid)
+        if len(rtokens):
+            self.__add_to_wtrie(fid, rtokens)
+            fjson.update({"r-tokens": rtokens})
 
         with open(f"{self.__index_dir}/{fid}", "w") as ff:
             json.dump(fjson, ff, sort_keys=False, ensure_ascii=False, indent=3)
@@ -235,7 +232,7 @@ class GPXIndex:
             with io.StringIO() as sbuf:
                 for point in gpx_region.tracks[0].segments[0].points:
                     sbuf.write(f"{point.latitude} {point.longitude}\n")
-                    bounds.recalc(point.latitude,point.longitude)
+                    bounds.recalc(point.latitude, point.longitude)
                 sbuf.seek(0)
                 with open(f"{self.__regions_dir}{filename}", "w", encoding='utf-8') as fdat:
                     fdat.write(f"{len(gpx_region.tracks[0].segments[0].points)}\n")
@@ -276,10 +273,7 @@ class GPXIndex:
 
 
 if __name__ == '__main__':
-
     index = GPXIndex("vindex")
-
-
 
     # for fname in os.listdir("angara-w"):
     #     gpx_fname = f"angara-w/{fname}"

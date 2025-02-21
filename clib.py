@@ -12,5 +12,10 @@ def clib_get_ptokens(gpxdatafile: str, pdir: str) -> list:
     return arg_ptokens.value.decode('utf-8').split()
 
 
-def clib_get_rtokens() -> list:
-    pass
+def clib_get_rtokens(gpxdatafile: str, rdir: str) -> list:
+    clib.get_rtokens.argtypes = [ctypes.c_char_p, ctypes.c_char_p, ctypes.c_char_p]
+    arg_rdir = rdir.encode('utf-8')
+    arg_gpxdatafile = gpxdatafile.encode('utf-8')
+    arg_rtokens = (ctypes.c_char * 256)()
+    clib.get_rtokens(arg_rdir, arg_gpxdatafile, arg_rtokens)
+    return arg_rtokens.value.decode('utf-8').split()
