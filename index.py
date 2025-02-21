@@ -275,9 +275,11 @@ class GPXIndex:
 if __name__ == '__main__':
     index = GPXIndex("vindex")
 
-    # for fname in os.listdir("angara-w"):
-    #     gpx_fname = f"angara-w/{fname}"
-    #     gpx_href_fname = f"angara-l/{fname.split('.')[0]}.href"
-    #     with open(gpx_href_fname, "r") as fhref:
-    #         url = fhref.readline().strip('\n')
-    #     index.add_track(gpx_fname, url)
+    for fname in os.listdir("/home/taras/gpxbaikal/gpxbot/angara-w"):
+        gpx_fname = f"/home/taras/gpxbaikal/gpxbot/angara-w/{fname}"
+        gpx_href_fname = f"/home/taras/gpxbaikal/gpxbot/angara-l/{fname.split('.')[0]}.href"
+        with open(gpx_href_fname, "r") as fhref:
+            url = fhref.readline().strip('\n')
+        print(f"Adding {gpx_fname} ...", end='')
+        index.add_track(gpx_fname, url)
+        print("OK")
