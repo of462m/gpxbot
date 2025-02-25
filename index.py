@@ -120,7 +120,6 @@ class GPXIndex:
                 for fname in os.listdir(f"{self.__wtrie_dir}{wtrie_path}"):
                     if os.path.isfile(f"{self.__wtrie_dir}{wtrie_path}/{fname}"):
                         token_fids.append(fname)
-        # return list(dict.fromkeys(token_fids))
         return list(set(token_fids))
 
     def __get_from_json(self, fid: str) -> dict:
@@ -246,40 +245,46 @@ class GPXIndex:
             print(f"ERROR")
 
     def search(self, tokens_str: str):
-        tokens = tokenize(tokens_str)
+        search_tokens = tokenize(tokens_str)
         # для чистки хвостов из places-токенов
         #
-        max_metric = len(tokens)
+        max_metric = len(search_tokens)
         res_fids = list()
-        tokens_fids = self.__get_from_wtrie(tokens)
-        for tokens_fid in tokens_fids:
-            fid_data = self.__get_from_json(tokens_fid)
+        search_tokens_fids = self.__get_from_wtrie(search_tokens)
+        for search_tokens_fid in search_tokens_fids:
+            search_fid_data = self.__get_from_json(search_tokens_fid)
             # убрать в отдельную ф-цию в metric:
             fid_max = 0
-            for token in tokens:
+            for search_token in search_tokens:
                 max_w = 0
-                for wtoken in fid_data['w-tokens']:
-                    max_w = max(max_w, jaro_winkler(token, wtoken, score_cutoff=0.88))
+                for wtoken in search_fid_data['w-tokens']:
+                    max_w = max(max_w, jaro_winkler(search_token, wtoken, score_cutoff=0.88))
                 fid_max += max_w
             # вот по сюда (ввести коэфф-т уменьшения для places-токенов)
-            fid_data.update({"w": round(fid_max, 4)})
+            search_fid_data.update({"w": round(fid_max, 4)})
             # fid_data.pop("w-tokens")
             if fid_max:
-                res_fids.append(fid_data)
+                res_fids.append(search_fid_data)
         res_fids = sorted(res_fids, key=lambda d: d['w'], reverse=True)
-        res = {"search-str": tokens_str, "search-tokens": tokens, "results-number": len(res_fids),
+        res = {"search-str": tokens_str, "search-tokens": search_tokens, "results-number": len(res_fids),
                "search-results": res_fids}
         print(json.dumps(res, ensure_ascii=False))
+
+    def geosearch_point(self, lat: float, lon: float):
+        pass
+
+    def geosearch_region(self):
+        pass
 
 
 if __name__ == '__main__':
     index = GPXIndex("vindex")
-
-    for fname in os.listdir("/home/taras/gpxbaikal/gpxbot/angara-w"):
-        gpx_fname = f"/home/taras/gpxbaikal/gpxbot/angara-w/{fname}"
-        gpx_href_fname = f"/home/taras/gpxbaikal/gpxbot/angara-l/{fname.split('.')[0]}.href"
-        with open(gpx_href_fname, "r") as fhref:
-            url = fhref.readline().strip('\n')
-        print(f"Adding {gpx_fname} ...", end='')
-        index.add_track(gpx_fname, url)
-        print("OK")
+    index.search('пик галина')
+    # for fname in os.listdir("/home/taras/gpxbaikal/gpxbot/angara-w"):
+    #     gpx_fname = f"/home/taras/gpxbaikal/gpxbot/angara-w/{fname}"
+    #     gpx_href_fname = f"/home/taras/gpxbaikal/gpxbot/angara-l/{fname.split('.')[0]}.href"
+    #     with open(gpx_href_fname, "r") as fhref:
+    #         url = fhref.readline().strip('\n')
+    #     print(f"Adding {gpx_fname} ...", end='')
+    #     index.add_track(gpx_fname, url)
+    #     print("OK")
