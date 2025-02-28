@@ -9,4 +9,7 @@ install: libgpxbaikal.so
 	install -v -o root -g root -m 644 libgpxbaikal.so $(LIBDIR)
 	rm libgpxbaikal.so
 
+main: main.c
+	$(CC) main.c -g -o main -lgpxbaikal -lm
+
 
