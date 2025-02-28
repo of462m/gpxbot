@@ -10,7 +10,8 @@ from gpxpy.gpx import GPX
 from Levenshtein import jaro_winkler, distance as l_distance
 
 from tokens import tokenize, get_wtokens
-from clib import clib_get_ptokens, clib_get_rtokens
+# from clib import clib_get_ptokens, clib_get_rtokens
+from metric import get_score
 
 
 # from normalize import is_match_xml_schema
@@ -253,19 +254,13 @@ class GPXIndex:
         search_tokens_fids = self.__get_from_wtrie(search_tokens)
         for search_tokens_fid in search_tokens_fids:
             search_fid_data = self.__get_from_json(search_tokens_fid)
-            # убрать в отдельную ф-цию в metric:
-            fid_max = 0
-            for search_token in search_tokens:
-                max_w = 0
-                for wtoken in search_fid_data['w-tokens']:
-                    max_w = max(max_w, jaro_winkler(search_token, wtoken, score_cutoff=0.88))
-                fid_max += max_w
-            # вот по сюда (ввести коэфф-т уменьшения для places-токенов)
-            search_fid_data.update({"w": round(fid_max, 4)})
+            w_score, p_score, r_score = get_score(search_fid_data, search_tokens)
+            score = w_score + 3.0*p_score + 2.0*r_score
+            search_fid_data.update({"score": round(score, 4)})
             # fid_data.pop("w-tokens")
-            if fid_max:
+            if score:
                 res_fids.append(search_fid_data)
-        res_fids = sorted(res_fids, key=lambda d: d['w'], reverse=True)
+        res_fids = sorted(res_fids, key=lambda d: d['score'], reverse=True)
         res = {"search-str": tokens_str, "search-tokens": search_tokens, "results-number": len(res_fids),
                "search-results": res_fids}
         print(json.dumps(res, ensure_ascii=False))
@@ -279,7 +274,7 @@ class GPXIndex:
 
 if __name__ == '__main__':
     index = GPXIndex("vindex")
-    index.search('пик галина')
+    index.search('хурума')
     # for fname in os.listdir("/home/taras/gpxbaikal/gpxbot/angara-w"):
     #     gpx_fname = f"/home/taras/gpxbaikal/gpxbot/angara-w/{fname}"
     #     gpx_href_fname = f"/home/taras/gpxbaikal/gpxbot/angara-l/{fname.split('.')[0]}.href"
