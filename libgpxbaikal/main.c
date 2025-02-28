@@ -17,6 +17,17 @@ int main(int argc, char *argv[]) {
 	sqr_region sreg00, sreg01;
 	int n;
 	char tokens[2048];
+	
+//	cpoint.lat=51.944190;
+//	cpoint.lon=102.376980;
+//	51.35034 104.58967
+	cpoint.lat=51.35034;
+	cpoint.lon=104.58967;
+
+	get_tracks_by_point(cpoint, 150.0, "/home/gpxbaikal/gpxbot/gindex/dat/tracks", tokens);
+	printf("[%s]\n", tokens);
+
+	return 1;
 
 	get_rtokens("/home/taras/gpxbaikal/gpxbot/vindex/dat/regions","03b5a1e8",tokens);
 	printf("[%s]\n", tokens);

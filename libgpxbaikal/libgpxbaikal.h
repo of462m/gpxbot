@@ -1,5 +1,5 @@
-#ifndef _MYLIB_H_
-#define _MYLIB_H_
+#ifndef _LIBGPXBAIKAL_H_
+#define _LIBGPXBAIKAL_H_
 
 typedef struct {
 	double x;
@@ -34,7 +34,7 @@ typedef struct {
 /*
 REGION FILE FORMAT:
 n - size of region array
-token1 token2 token3 - tokens
+0 token1 token2 token3 - tokens
 min.lat min.lon max.lat max.lon - bounds
 lat lon
 lat lon
@@ -71,4 +71,6 @@ int load_region(char *regdatafile, region *reg);
 int get_ptokens(char *pdir, char *gpxdatafile, char *ptokens);
 int get_rtokens(char *rdir, char *gpxdatafile, char *rtokens);
 
-#endif /* !_MYLIB_H_ */
+int get_tracks_by_point(wpt pt, double nbhood_r, char *tdir, char *fids);
+
+#endif /* !_LIBGPXBAIKAL_H_ */

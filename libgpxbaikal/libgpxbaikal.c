@@ -123,6 +123,16 @@ void fillmeup(char *s) {
 	sprintf(s,"%s", "один два несколько");
 }
 
+int load_track_bounds(char *fname, sqr_region *bounds) {
+	FILE *ftrk;
+	int n;
+
+	ftrk = fopen(fname, "r");
+		fscanf(ftrk,"%i",&n);	
+		fscanf(ftrk,"%lf %lf %lf %lf",&bounds->min.lat, &bounds->min.lon, &bounds->max.lat, &bounds->max.lon);
+	fclose(ftrk);
+}
+
 int load_track(char *gpxdatafile, trk *track) {
 	FILE *fgpx;
 	fgpx = fopen(gpxdatafile, "r");
@@ -206,5 +216,30 @@ int get_rtokens(char *rdir, char *gpxdatafile, char *rtokens) {
         }
         free(track.points);
         return 1;
+}
+
+int get_tracks_by_point(wpt pt, double nbhood_r, char *tdir, char *fids) {
+	DIR *dir;
+	struct dirent *dir_ent;
+	char fname[2048];
+	trk track;
+	sqr_region trk_bounds, pt_sqr_nbhood;
+
+	strcpy(fids,"");
+	dir = opendir(tdir);
+	if (dir == NULL) return 0;
+	while ((dir_ent = readdir(dir))) {
+		if (strcmp(".",dir_ent->d_name) && strcmp("..",dir_ent->d_name)) {
+			sprintf(fname,"%s/%s",tdir,dir_ent->d_name);
+			load_track_bounds(fname,&trk_bounds);
+			if (is_wpt_in_sqr_region(pt, trk_bounds)) {
+				load_track(fname, &track);
+				get_sqr_region(pt, nbhood_r, &pt_sqr_nbhood);
+				if (is_trk_in_sqr_region(track, pt_sqr_nbhood))
+					sprintf(fids,"%s %s",fids,dir_ent->d_name);
+
+			}
+		}
+	}
 }
 
