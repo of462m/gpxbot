@@ -10,7 +10,7 @@ from gpxpy.gpx import GPX
 from Levenshtein import jaro_winkler, distance as l_distance
 
 from tokens import tokenize, get_wtokens
-# from clib import clib_get_ptokens, clib_get_rtokens
+from clib import clib_get_ptokens, clib_get_rtokens
 from metric import get_score
 
 
