@@ -10,7 +10,7 @@ from gpxpy.gpx import GPX
 from Levenshtein import jaro_winkler, distance as l_distance
 
 from tokens import tokenize, get_wtokens
-from clib import clib_get_ptokens, clib_get_rtokens
+# from clib import clib_get_ptokens, clib_get_rtokens
 from metric import get_score
 
 
@@ -88,12 +88,12 @@ class GPXIndex:
         return self.__regions_dir
 
     def __init__(self, root_dir):
-        self.__root_dir = root_dir
-        self.__index_dir = f"{root_dir}/index/"
-        self.__wtrie_dir = f"{root_dir}/wtrie/"
-        self.__gpx_tracks_dir = f"{root_dir}/dat/tracks/"
-        self.__points_dir = f"{root_dir}/dat/points/"
-        self.__regions_dir = f"{root_dir}/dat/regions/"
+        self.__root_dir = os.path.abspath(root_dir)
+        self.__index_dir = f"{self.__root_dir}/index/"
+        self.__wtrie_dir = f"{self.__root_dir}/wtrie/"
+        self.__gpx_tracks_dir = f"{self.__root_dir}/dat/tracks/"
+        self.__points_dir = f"{self.__root_dir}/dat/points/"
+        self.__regions_dir = f"{self.__root_dir}/dat/regions/"
 
         if not os.path.isdir(root_dir):
             os.makedirs(self.__index_dir)
