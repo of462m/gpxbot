@@ -10,6 +10,6 @@ install: libgpxbaikal.so
 	rm libgpxbaikal.so
 
 prog: $(PROG).c
-	$(CC) $(CFLAGS) $(PROG).c -o $(PROG) -lgpxbaikal -lm
+	$(CC) $(CFLAGS) $(PROG).c -o $(PROG) -lgpxbaikal
 
 

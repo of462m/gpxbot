@@ -237,7 +237,6 @@ int get_tracks_by_point(wpt pt, double nbhood_r, char *tdir, char *fids) {
 				get_sqr_region(pt, nbhood_r, &pt_sqr_nbhood);
 				if (is_trk_in_sqr_region(track, pt_sqr_nbhood))
 					sprintf(fids,"%s %s",fids,dir_ent->d_name);
-
 			}
 		}
 	}

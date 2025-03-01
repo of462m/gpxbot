@@ -20,11 +20,15 @@ int main(int argc, char *argv[]) {
 	
 //	cpoint.lat=51.944190;
 //	cpoint.lon=102.376980;
-//	51.35034 104.58967
-	cpoint.lat=51.35034;
-	cpoint.lon=104.58967;
+//	52.796294 106.474828 53.014763 106.77184
+	dpoint.lat=52.796294;
+	dpoint.lon=106.474828;
+	cpoint.lat=53.014763;
+	cpoint.lon=106.77184;
 
-	get_tracks_by_point(cpoint, 150.0, "/home/gpxbaikal/gpxbot/gindex/dat/tracks", tokens);
+	printf("%lf\n",geo_distance_m(cpoint,dpoint));
+
+	get_tracks_by_point(cpoint, 1500.0, "/home/gpxbaikal/gpxbot/gindex/dat/tracks", tokens);
 	printf("[%s]\n", tokens);
 
 	return 1;
