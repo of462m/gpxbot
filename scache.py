@@ -1,7 +1,6 @@
 import gpxpy
 from gpxpy.gpx import GPX
-from regions import get_gpx_season
-
+from index import get_gpx_season
 
 # п.Доктор - почистить через регулярку
 # убираем предлоги https://skysmart.ru/articles/russian/razryady-predlogov

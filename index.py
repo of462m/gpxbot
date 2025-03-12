@@ -73,6 +73,23 @@ class RegBounds:
         return f"{round(self.min_lat, 6)} {round(self.min_lon, 6)} {round(self.max_lat, 6)} {round(self.max_lon, 6)}"
 
 
+def get_gpx_season(gpx: GPX):
+    ms = ('зима', 'зима', 'весна',
+          'весна', 'весна', 'лето',
+          'лето', 'лето', 'осень',
+          'осень', 'осень', 'зима',
+          )
+    if gpx.time:
+        return ms[gpx.time.month - 1]
+    if gpx.waypoints:
+        if gpx.waypoints[0].time:
+            return ms[gpx.waypoints[0].time.month - 1]
+    if gpx.has_times():
+        return ms[gpx.tracks[0].segments[0].points[0].time.month - 1]
+    else:
+        return ''
+
+
 class GPXIndex:
 
     @property
@@ -95,7 +112,7 @@ class GPXIndex:
         self.__points_dir = f"{self.__root_dir}/dat/points/"
         self.__regions_dir = f"{self.__root_dir}/dat/regions/"
 
-        if not os.path.isdir(root_dir):
+        if not os.path.isdir(self.__root_dir):
             os.makedirs(self.__index_dir)
             os.makedirs(self.__wtrie_dir)
             os.makedirs(self.__gpx_tracks_dir)
@@ -177,6 +194,7 @@ class GPXIndex:
         # fjson.update({"match-gpx-xml-schema": is_match_gpx_xml_schema(?)})
 
         gpx = load_gpx(gpx_filename)
+        fjson.update({"gpx-season": get_gpx_season(gpx)})
         self.add_gpx_to_data(gpx, fid)
         fjson.update({"gpx-version": gpx.version})
         if gpx.name:
@@ -255,7 +273,7 @@ class GPXIndex:
         for search_tokens_fid in search_tokens_fids:
             search_fid_data = self.__get_from_json(search_tokens_fid)
             w_score, p_score, r_score = get_score(search_fid_data, search_tokens)
-            score = w_score + 3.0*p_score + 2.0*r_score
+            score = w_score + 3.0 * p_score + 2.0 * r_score
             search_fid_data.update({"score": round(score, 4)})
             # fid_data.pop("w-tokens")
             if score:
