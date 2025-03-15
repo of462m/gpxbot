@@ -10,7 +10,7 @@ from gpxpy.gpx import GPX
 from Levenshtein import jaro_winkler, distance as l_distance
 
 from tokens import tokenize, get_wtokens
-# from clib import clib_get_ptokens, clib_get_rtokens
+from clib import clib_get_ptokens, clib_get_rtokens
 from metric import get_score
 
 
@@ -291,13 +291,13 @@ class GPXIndex:
 
 
 if __name__ == '__main__':
-    index = GPXIndex("vindex")
-    index.search('хурума')
-    # for fname in os.listdir("/home/taras/gpxbaikal/gpxbot/angara-w"):
-    #     gpx_fname = f"/home/taras/gpxbaikal/gpxbot/angara-w/{fname}"
-    #     gpx_href_fname = f"/home/taras/gpxbaikal/gpxbot/angara-l/{fname.split('.')[0]}.href"
-    #     with open(gpx_href_fname, "r") as fhref:
-    #         url = fhref.readline().strip('\n')
-    #     print(f"Adding {gpx_fname} ...", end='')
-    #     index.add_track(gpx_fname, url)
-    #     print("OK")
+    index = GPXIndex("mindex")
+    index.search('галина')
+#    for fname in os.listdir("angara-w"):
+#         gpx_fname = f"angara-w/{fname}"
+#         gpx_href_fname = f"angara-l/{fname.split('.')[0]}.href"
+#         with open(gpx_href_fname, "r") as fhref:
+#             url = fhref.readline().strip('\n')
+#         print(f"Adding {gpx_fname} ...", end='')
+#         index.add_track(gpx_fname, url)
+#         print("OK")
