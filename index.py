@@ -73,19 +73,23 @@ class RegBounds:
         return f"{round(self.min_lat, 6)} {round(self.min_lon, 6)} {round(self.max_lat, 6)} {round(self.max_lon, 6)}"
 
 
-def get_gpx_season(gpx: GPX):
-    ms = ('зима', 'зима', 'весна',
+def get_trk_season(gpx: GPX):
+    ms = ('', 'зима', 'зима', 'весна',
           'весна', 'весна', 'лето',
           'лето', 'лето', 'осень',
           'осень', 'осень', 'зима',
           )
-    if gpx.time:
-        return ms[gpx.time.month - 1]
     if gpx.waypoints:
         if gpx.waypoints[0].time:
-            return ms[gpx.waypoints[0].time.month - 1]
-    if gpx.has_times():
-        return ms[gpx.tracks[0].segments[0].points[0].time.month - 1]
+            return ms[gpx.waypoints[0].time.month]
+    if gpx.tracks:
+        if gpx.has_times():
+            return ms[gpx.tracks[0].segments[0].points[0].time.month]
+    if gpx.routes:
+        if gpx.has_times():
+            return ms[gpx.routes[0].points[0].time.month]
+    if gpx.time:
+        return ms[gpx.time.month]
     else:
         return ''
 
@@ -194,7 +198,7 @@ class GPXIndex:
         # fjson.update({"match-gpx-xml-schema": is_match_gpx_xml_schema(?)})
 
         gpx = load_gpx(gpx_filename)
-        fjson.update({"gpx-season": get_gpx_season(gpx)})
+        fjson.update({"gpx-season": get_trk_season(gpx)})
         self.add_gpx_to_data(gpx, fid)
         fjson.update({"gpx-version": gpx.version})
         if gpx.name:
