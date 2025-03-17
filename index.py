@@ -95,7 +95,7 @@ def get_trk_season(gpx: GPX):
     if gpx.time:
         return ms[gpx.time.month]
     else:
-        return ''
+        return Seasons.NONE
 
 
 class GPXIndex:
@@ -300,12 +300,12 @@ class GPXIndex:
 
 if __name__ == '__main__':
     index = GPXIndex("mindex")
-    index.search('галина')
-# for fname in os.listdir("angara-w"):
-#      gpx_fname = f"angara-w/{fname}"
-#      gpx_href_fname = f"angara-l/{fname.split('.')[0]}.href"
-#      with open(gpx_href_fname, "r") as fhref:
-#          url = fhref.readline().strip('\n')
-#      print(f"Adding {gpx_fname} ...", end='')
-#      index.add_track(gpx_fname, url)
-#      print("OK")
+#    index.search('галина')
+    for fname in os.listdir("angara-w"):
+      gpx_fname = f"angara-w/{fname}"
+      gpx_href_fname = f"angara-l/{fname.split('.')[0]}.href"
+      with open(gpx_href_fname, "r") as fhref:
+          url = fhref.readline().strip('\n')
+      print(f"Adding {gpx_fname} ...", end='')
+      index.add_track(gpx_fname, url)
+      print("OK")
