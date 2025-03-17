@@ -71,15 +71,14 @@ def tokenize(s: str) -> tuple:
         word = word.replace('.', ' ')
 
         for token in word.split():
-            if token in [*winter_tokens, *spring_tokens, *summer_tokens, *autumn_tokens]:
-                if token in winter_tokens:
-                    season = Seasons.WINTER
-                if token in spring_tokens:
-                    season = Seasons.SPRING
-                if token in summer_tokens:
-                    season = Seasons.SUMMER
-                if token in autumn_tokens:
-                    season = Seasons.AUTUMN
+            if token in winter_tokens:
+                season = Seasons.WINTER
+            elif token in spring_tokens:
+                season = Seasons.SPRING
+            elif token in summer_tokens:
+                season = Seasons.SUMMER
+            elif token in autumn_tokens:
+                season = Seasons.AUTUMN
             elif len(token) > 1 and token not in [*pr, *strava, *mon, *mday, *trash, ]:
                 res.append(token)
 
@@ -104,7 +103,7 @@ def get_wtokens(gpx: GPX) -> tuple:
 
 
 if __name__ == '__main__':
-    tokens, season = tokenize('кбжд летом')
+    tokens, season = tokenize('осенний мунку спрдыг')
     if season.value == Seasons.WINTER:
         print('зима')
     if season.value == Seasons.SPRING:
