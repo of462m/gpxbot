@@ -7,9 +7,8 @@ import geopy.distance
 import gpxpy
 from lxml import etree
 from gpxpy.gpx import GPX
-from Levenshtein import jaro_winkler, distance as l_distance
 
-from tokens import tokenize, get_wtokens
+from tokens import tokenize, get_wtokens, Seasons
 from clib import clib_get_ptokens, clib_get_rtokens
 from metric import get_score
 
@@ -74,10 +73,15 @@ class RegBounds:
 
 
 def get_trk_season(gpx: GPX):
-    ms = ('', 'зима', 'зима', 'весна',
-          'весна', 'весна', 'лето',
-          'лето', 'лето', 'осень',
-          'осень', 'осень', 'зима',
+    # ms = ('', 'зима', 'зима', 'весна',
+    #       'весна', 'весна', 'лето',
+    #       'лето', 'лето', 'осень',
+    #       'осень', 'осень', 'зима',
+    #       )
+    ms = ('', Seasons.WINTER, Seasons.WINTER, Seasons.SPRING,
+          Seasons.SPRING, Seasons.SPRING, Seasons.SUMMER,
+          Seasons.SUMMER, Seasons.SUMMER, Seasons.AUTUMN,
+          Seasons.AUTUMN, Seasons.AUTUMN, Seasons.WINTER,
           )
     if gpx.waypoints:
         if gpx.waypoints[0].time:
@@ -205,7 +209,7 @@ class GPXIndex:
             fjson.update({"gpx-name": gpx.name})
         if gpx.description:
             fjson.update({"gpx-desc": gpx.description})
-        wtokens = get_wtokens(gpx)
+        wtokens, wseason = get_wtokens(gpx)
         if len(wtokens):
             self.__add_to_wtrie(fid, wtokens)
             fjson.update({"w-tokens": wtokens})
@@ -268,7 +272,7 @@ class GPXIndex:
             print(f"ERROR")
 
     def search(self, tokens_str: str):
-        search_tokens = tokenize(tokens_str)
+        search_tokens, season = tokenize(tokens_str)
         # для чистки хвостов из places-токенов
         #
         max_metric = len(search_tokens)
@@ -297,11 +301,11 @@ class GPXIndex:
 if __name__ == '__main__':
     index = GPXIndex("mindex")
     index.search('галина')
-#    for fname in os.listdir("angara-w"):
-#         gpx_fname = f"angara-w/{fname}"
-#         gpx_href_fname = f"angara-l/{fname.split('.')[0]}.href"
-#         with open(gpx_href_fname, "r") as fhref:
-#             url = fhref.readline().strip('\n')
-#         print(f"Adding {gpx_fname} ...", end='')
-#         index.add_track(gpx_fname, url)
-#         print("OK")
+# for fname in os.listdir("angara-w"):
+#      gpx_fname = f"angara-w/{fname}"
+#      gpx_href_fname = f"angara-l/{fname.split('.')[0]}.href"
+#      with open(gpx_href_fname, "r") as fhref:
+#          url = fhref.readline().strip('\n')
+#      print(f"Adding {gpx_fname} ...", end='')
+#      index.add_track(gpx_fname, url)
+#      print("OK")

@@ -1,10 +1,20 @@
 import re
 from gpxpy.gpx import GPX
+from enum import IntEnum, auto
 
 
-def tokenize(s: str) -> list:
+class Seasons(IntEnum):
+    NONE = auto()
+    WINTER = auto()
+    SPRING = auto()
+    SUMMER = auto()
+    AUTUMN = auto()
+
+
+def tokenize(s: str) -> tuple:
     s = s.lower().replace('ё', 'е')
     res = list()
+    season = Seasons.NONE
     pr = (
         'на', 'по', 'из', 'от', 'за', 'до', 'перед', 'без', 'через', 'над', 'про',
         'под', 'для', 'после', 'при', 'между', 'около', 'среди', 'вокруг', 'мимо',
@@ -17,6 +27,11 @@ def tokenize(s: str) -> list:
     mday = ('mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun',
             'пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс',
             )
+
+    winter_tokens = ('зима', 'зимой', 'зимний', 'зимняя', 'зимнее', 'зимние',)
+    spring_tokens = ('весна', 'весной', 'весенний', 'весенняя', 'весеннее', 'весенние',)
+    summer_tokens = ('лето', 'летом', 'летний', 'летняя', 'летнее', 'летние',)
+    autumn_tokens = ('осень', 'осенью', 'осенний', 'осенняя', 'осеннее', 'осенние',)
 
     strava = ('strava', 'by', 'stravatogpx', 'app')
 
@@ -54,14 +69,24 @@ def tokenize(s: str) -> list:
         word = re.sub(r'^о\.(\w+)?$', r'остров озеро \1', word)
 
         word = word.replace('.', ' ')
+
         for token in word.split():
-            if len(token) > 1 and token not in [*pr, *strava, *mon, *mday, *trash]:
+            if token in [*winter_tokens, *spring_tokens, *summer_tokens, *autumn_tokens]:
+                if token in winter_tokens:
+                    season = Seasons.WINTER
+                if token in spring_tokens:
+                    season = Seasons.SPRING
+                if token in summer_tokens:
+                    season = Seasons.SUMMER
+                if token in autumn_tokens:
+                    season = Seasons.AUTUMN
+            elif len(token) > 1 and token not in [*pr, *strava, *mon, *mday, *trash, ]:
                 res.append(token)
-                # res = list(dict.fromkeys(res))
-    return list(set(res))
+
+    return list(set(res)), season
 
 
-def get_wtokens(gpx: GPX) -> list:
+def get_wtokens(gpx: GPX) -> tuple:
     wtokens = list()
     if gpx.name:
         wtokens.append(gpx.name)
@@ -78,3 +103,13 @@ def get_wtokens(gpx: GPX) -> list:
     return tokenize(' '.join(wtokens))
 
 
+if __name__ == '__main__':
+    tokens, season = tokenize('кбжд летом')
+    if season.value == Seasons.WINTER:
+        print('зима')
+    if season.value == Seasons.SPRING:
+        print('весна')
+    if season.value == Seasons.SUMMER:
+        print('лето')
+    if season.value == Seasons.AUTUMN:
+        print('осень')
