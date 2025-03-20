@@ -5,7 +5,7 @@ import gpxpy
 from gpxpy.gpx import GPX
 import time
 from math import sin, cos, acos
-from index import md5_checksum, GPXIndex
+from gpxindex.index import md5_checksum, GPXIndex
 
 
 def get_curve_delta(pt: tuple, delta: float = 0.1):

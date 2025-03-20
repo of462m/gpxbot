@@ -9,7 +9,7 @@ from lxml import etree
 from gpxpy.gpx import GPX
 
 from tokens import tokenize, get_wtokens, Seasons
-from clib import clib_get_ptokens, clib_get_rtokens
+from gpxindex.clib import clib_get_ptokens, clib_get_rtokens
 from metric import get_score
 
 
@@ -301,7 +301,7 @@ class GPXIndex:
 if __name__ == '__main__':
     index = GPXIndex("mindex")
 #    index.search('галина')
-    for fname in os.listdir("angara-w"):
+    for fname in os.listdir("../angara-w"):
       gpx_fname = f"angara-w/{fname}"
       gpx_href_fname = f"angara-l/{fname.split('.')[0]}.href"
       with open(gpx_href_fname, "r") as fhref:

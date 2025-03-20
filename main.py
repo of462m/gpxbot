@@ -14,7 +14,7 @@ from aiogram.types import Message
 from aiogram.utils.keyboard import InlineKeyboardMarkup
 # from aiogram.types import Message, ContentType
 from dotenv import load_dotenv
-from index import GPXIndex
+from gpxindex.index import GPXIndex
 
 load_dotenv()
 bot = Bot(token=os.getenv('TGTOKEN'))

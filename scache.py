@@ -1,11 +1,11 @@
 import gpxpy
 from gpxpy.gpx import GPX
-from index import get_trk_season
+from gpxindex.index import get_trk_season
 
 # п.Доктор - почистить через регулярку
 # убираем предлоги https://skysmart.ru/articles/russian/razryady-predlogov
 # цифры, даты, 178-й километр
-from tokens import tokenize
+from gpxindex.tokens import tokenize
 
 
 def index_gpx(fname: str, gpx: GPX, index_dir: str='index'):
