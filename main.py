@@ -8,11 +8,13 @@ from datetime import datetime
 from ioio import get_exif_coords_from_bytesio
 
 from aiogram import Bot, Dispatcher, F, types
-from aiogram.filters import Command
+#from aiogram.filters import Command, CommandObject
+from aiogram.filters.command import CommandObject,  Command
 from aiogram.types import Message
 from aiogram.utils.keyboard import InlineKeyboardMarkup
 # from aiogram.types import Message, ContentType
 from dotenv import load_dotenv
+from index import GPXIndex
 
 load_dotenv()
 bot = Bot(token=os.getenv('TGTOKEN'))
@@ -62,6 +64,12 @@ async def cmd_start(msg: Message):
     # await bot.send_photo(msg.chat.id, types.FSInputFile(get_random_photo('pic')), caption=start_txt, reply_markup=kb_builder.as_markup())
     await bot.send_photo(msg.chat.id, types.FSInputFile(get_random_photo('pic')), caption=start_txt, reply_markup=kb)
     print(f"{datetime.now()} START from {msg.from_user.username} ({msg.from_user.full_name})")
+
+
+@dp.message(Command('s'))
+async def cmd_search(msg: Message, command: CommandObject):
+    index = GPXIndex("mindex")
+    index.search(command.args)
 
 
 @dp.message(F.document)
