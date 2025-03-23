@@ -7,3 +7,4 @@ gpxpy~=1.6.2
 lxml~=5.2.2
 levenshtein~=0.26.1
 geopy~=2.4.1
+pydantic~=2.7.3

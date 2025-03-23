@@ -4,6 +4,7 @@ import os
 import random
 import re
 import io
+import requests
 from datetime import datetime
 from ioio import get_exif_coords_from_bytesio
 
@@ -14,7 +15,7 @@ from aiogram.types import Message
 from aiogram.utils.keyboard import InlineKeyboardMarkup
 # from aiogram.types import Message, ContentType
 from dotenv import load_dotenv
-from gpxindex.index import GPXIndex
+# from gpxindex.index import GPXIndex
 
 load_dotenv()
 bot = Bot(token=os.getenv('TGTOKEN'))
@@ -68,8 +69,11 @@ async def cmd_start(msg: Message):
 
 @dp.message(Command('s'))
 async def cmd_search(msg: Message, command: CommandObject):
-    index = GPXIndex("mindex")
-    index.search(command.args)
+    # await msg.answer("\U0001f341 \U0001F342 осенняя пора\n\U0001F33B лето\n\U00002744 зима\n\U0001f4a7 весна")
+    params = {"tokens": command.args}
+    resp = requests.get('http://api.gpxbaikal.ru/v1/', params=params)
+    results = resp.json()
+    await msg.answer(f"results: {results['results-number']}")
 
 
 @dp.message(F.document)
